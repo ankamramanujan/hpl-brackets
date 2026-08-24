@@ -326,8 +326,8 @@
 
     <div class="card contact-box">
         <h2>Share Your Sports Insights</h2>
-        <form action="https://api.web3forms.com/submit" method="POST">
-            <input type="hidden" name="access_key" value="ec78615e-4d6e-4326-a764-daa9b399cbf9">
+        <form action="https://web3forms.com/submit" method="POST">
+            <input type="hidden" name="access_key" value="YOUR_WEB3FORMS_ACCESS_KEY_HERE">
             <input type="hidden" name="subject" value="New HPL Sports Insight Submission">
             
             <div class="form-row">
@@ -506,3 +506,77 @@
                 matrix[m.t2][`${prefix}_total`]++;
             });
         }
+
+        renderStandingsList(qualCounts, permutations, matrix);
+    }
+
+    function renderStandingsList(counts, total, matrix) {
+        const container = document.getElementById('standings-list');
+        container.innerHTML = '';
+
+        const currentStandings = {};
+        Object.keys(teams).forEach(t => {
+            currentStandings[t] = { pts: teams[t].currentPts, mp: teams[t].mp, mw: teams[t].mw };
+        });
+
+        fixtures.filter(f => f.outcome !== null).forEach(f => {
+            currentStandings[f.t1].mp += 2;
+            currentStandings[f.t2].mp += 2;
+            if (f.outcome === 't1') { 
+                currentStandings[f.t1].pts += 2; 
+                currentStandings[f.t1].mw += 2; 
+            } else { 
+                currentStandings[f.t2].pts += 2; 
+                currentStandings[f.t2].mw += 2; 
+            }
+        });
+
+        const sorted = Object.keys(teams).sort((a, b) => {
+            if (currentStandings[b].pts !== currentStandings[a].pts) {
+                return currentStandings[b].pts - currentStandings[a].pts;
+            }
+            const mwPctB = currentStandings[b].mw / currentStandings[b].mp;
+            const mwPctA = currentStandings[a].mw / currentStandings[a].mp;
+            return mwPctB - mwPctA;
+        });
+
+        sorted.forEach((team, idx) => {
+            const pct = ((counts[team] / total) * 100).toFixed(1);
+            let badgeClass = 'badge-yellow';
+            if (parseFloat(pct) >= 80) badgeClass = 'badge-green';
+            if (parseFloat(pct) <= 20) badgeClass = 'badge-red';
+
+            const displayMwPct = ((currentStandings[team].mw / currentStandings[team].mp) * 100).toFixed(2);
+            const md4WinPct = matrix[team].md4_total ? ((matrix[team].md4_win / (matrix[team].md4_total / 2)) * 100).toFixed(0) : pct;
+            const md4LossPct = matrix[team].md4_total ? ((matrix[team].md4_loss / (matrix[team].md4_total / 2)) * 100).toFixed(0) : pct;
+            const md5WinPct = matrix[team].md5_total ? ((matrix[team].md5_win / (matrix[team].md5_total / 2)) * 100).toFixed(0) : pct;
+            const md5LossPct = matrix[team].md5_total ? ((matrix[team].md5_loss / (matrix[team].md5_total / 2)) * 100).toFixed(0) : pct;
+
+            const row = document.createElement('div');
+            row.className = 'team-row';
+            row.innerHTML = `
+                <div class="team-meta">
+                    <div class="team-rank">${idx + 1}</div>
+                    <div>
+                        <div class="team-name">${team}</div>
+                        <div class="team-stats">${currentStandings[team].pts} Pts | MW%: ${displayMwPct}%</div>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div class="lookahead-box">
+                        M4: <span class="win-text">W:${md4WinPct}%</span> <span class="loss-text">L:${md4LossPct}%</span><br>
+                        M5: <span class="win-text">W:${md5WinPct}%</span> <span class="loss-text">L:${md5LossPct}%</span>
+                    </div>
+                    <div class="probability-badge ${badgeClass}">${pct}%</div>
+                </div>
+            `;
+            container.appendChild(row);
+        });
+    }
+
+    updateCounter();
+    renderFixtures();
+    calculateProbabilities();
+</script>
+</body>
+</html>
