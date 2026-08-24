@@ -1,300 +1,286 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2113.65">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Arial; color: #1a1a1a; -webkit-text-stroke: #1a1a1a; background-color: #ffffff}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 10.0px Arial; color: #1a1a1a; -webkit-text-stroke: #1a1a1a; min-height: 11.0px}
-    span.s1 {font-kerning: none}
-    span.s2 {text-decoration: underline ; font-kerning: none; color: #103cc0; -webkit-text-stroke: 0px #103cc0}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HPL Qualification Simulator</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        h1, h2 {
+            color: #0f2c59;
+            margin-top: 0;
+        }
+        p {
+            color: #666;
+            font-size: 14px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+        }
+        @media(min-width: 900px) {
+            .grid { grid-template-columns: 350px 1fr; }
+        }
+        .fixtures-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            height: fit-content;
+        }
+        .match-group {
+            margin-bottom: 20px;
+        }
+        .match-group h3 {
+            font-size: 14px;
+            color: #1e293b;
+            border-bottom: 2px solid #cbd5e1;
+            padding-bottom: 4px;
+            margin-bottom: 10px;
+        }
+        .fixture-row {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .teams-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #334155;
+            text-align: center;
+        }
+        .btn-group {
+            display: flex;
+            gap: 4px;
+        }
+        .btn {
+            flex: 1;
+            padding: 6px 10px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid #cbd5e1;
+            background: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn:hover { background: #f1f5f9; }
+        .btn.active-win {
+            background: #22c55e;
+            color: white;
+            border-color: #16a34a;
+        }
+        .btn.active-loss {
+            background: #ef4444;
+            color: white;
+            border-color: #dc2626;
+        }
+        .btn-reset {
+            width: 100%;
+            padding: 10px;
+            background: #0f2c59;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .btn-reset:hover { background: #1e40af; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 14px;
+        }
+        th {
+            background-color: #0f2c59;
+            color: white;
+        }
+        tr:hover { background-color: #f8fafc; }
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .badge-green { background: #dcfce7; color: #15803d; }
+        .badge-yellow { background: #fef9c3; color: #a16207; }
+        .badge-red { background: #fee2e2; color: #b91c1c; }
+        .matrix-cell {
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        .win-text { color: #16a34a; font-weight: 600; }
+        .loss-text { color: #dc2626; font-weight: 600; }
+    </style>
 </head>
 <body>
-<p class="p1"><span class="s1">&lt;!DOCTYPE html&gt;</span></p>
-<p class="p1"><span class="s1">&lt;html lang="en"&gt;</span></p>
-<p class="p1"><span class="s1">&lt;head&gt;</span></p>
-<p class="p1"><span class="s1">    &lt;meta charset="UTF-8"&gt;</span></p>
-<p class="p1"><span class="s1">    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span></p>
-<p class="p1"><span class="s1">    &lt;title&gt;HPL Qualification Simulator&lt;/title&gt;</span></p>
-<p class="p1"><span class="s1">    &lt;style&gt;</span></p>
-<p class="p1"><span class="s1">        body {</span></p>
-<p class="p1"><span class="s1">            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;</span></p>
-<p class="p1"><span class="s1">            background-color: #f4f6f9;</span></p>
-<p class="p1"><span class="s1">            color: #333;</span></p>
-<p class="p1"><span class="s1">            margin: 0;</span></p>
-<p class="p1"><span class="s1">            padding: 20px;</span></p>
-<p class="p1"><span class="s1">        }</span></p>
-<p class="p1"><span class="s1">        .container {</span></p>
-<p class="p1"><span class="s1">            max-width: 1100px;</span></p>
-<p class="p1"><span class="s1">            margin: 0 auto;</span></p>
-<p class="p1"><span class="s1">            background: #fff;</span></p>
-<p class="p1"><span class="s1">            padding: 25px;</span></p>
-<p class="p1"><span class="s1">            border-radius: 12px;</span></p>
-<p class="p1"><span class="s1">            box-shadow: 0 4px 15px rgba(0,0,0,0.05);</span></p>
-<p class="p1"><span class="s1">        }</span></p>
-<p class="p1"><span class="s1">        h1, h2 {</span></p>
-<p class="p1"><span class="s1">            color: #0f2c59;</span></p>
-<p class="p1"><span class="s1">            margin-top: 0;</span></p>
-<p class="p1"><span class="s1">        }</span></p>
-<p class="p1"><span class="s1">        p {</span></p>
-<p class="p1"><span class="s1">            color: #666;</span></p>
-<p class="p1"><span class="s1">            font-size: 14px;</span></p>
-<p class="p1"><span class="s1">        }</span></p>
-<p class="p1"><span class="s1">        .grid {</span></p>
-<p class="p1"><span class="s1">            display: grid;</span></p>
-<p class="p1"><span class="s1">            grid-template-columns: 1fr;</span></p>
-<p class="p1"><span class="s1">            gap: 25px;</span></p>
-<p class="p1"><span class="s1">        }</span></p>
-<p class="p1"><span class="s1">        @media(min-width: 900px) {</span></p>
-<p class="p1"><span class="s1">            .grid { grid-template-columns: 350px 1fr; }</span></p>
-<p class="p1"><span class="s1">        }</span></p>
-<p class="p1"><span class="s1">        .fixtures-card {</span></p>
-<p class="p1"><span class="s1">            background: #f8fafc;</span></p>
-<p class="p1"><span class="s1">            border: 1px solid #e2e8f0;</span></p>
-<p class="p1"><span class="s1">            border-radius: 8px;</span></p>
-<p class="p1"><span class="s1">            padding: 15px;</span></p>
-<p class="p1"><span class="s1">            height: fit-content;</span></p>
-<p class="p1"><span class="s1">        }</span></p>
-<p class="p1"><span class="s1">        .match-group {</span></p>
-<p class="p1"><span class="s1">            margin-bottom: 20px;</span></p>
-<p class="p1"><span class="s1">        }</span></p>
-<p class="p1"><span class="s1">        .match-group h3 {</span></p>
-<p class="p1"><span class="s1">            font-size: 14px;</span></p>
-<p class="p1"><span class="s1">            color: #1e293b;</span></p>
-<p class="p1"><span class="s1">            border-bottom: 2px solid #cbd5e1;</span></p>
-<p class="p1"><span class="s1">            padding-bottom: 4px;</span></p>
-<p class="p1"><span class="s1">            margin-bottom: 10px;</span></p>
-<p class="p1"><span class="s1">        }</span></p>
-<p class="p1"><span class="s1">        .fixture-row {</span></p>
-<p class="p1"><span class="s1">            background: white;</span></p>
-<p class="p1"><span class="s1">            border: 1px solid #e2e8f0;</span></p>
-<p class="p1"><span class="s1">            border-radius: 6px;</span></p>
-<p class="p1"><span class="s1">            padding: 10px;</span></p>
-<p class="p1"><span class="s1">            margin-bottom: 8px;</span></p>
-<p class="p1"><span class="s1">            display: flex;</span></p>
-<p class="p1"><span class="s1">            flex-direction: column;</span></p>
-<p class="p1"><span class="s1">            gap: 8px;</span></p>
-<p class="p1"><span class="s1">        }</span></p>
-<p class="p1"><span class="s1">        .teams-label {</span></p>
-<p class="p1"><span class="s1">            font-size: 13px;</span></p>
-<p class="p1"><span class="s1">            font-weight: 600;</span></p>
-<p class="p1"><span class="s1">            color: #334155;</span></p>
-<p class="p1"><span class="s1">            text-align: center;</span></p>
-<p class="p1"><span class="s1">        }</span></p>
-<p class="p1"><span class="s1">        .btn-group {</span></p>
-<p class="p1"><span class="s1">            display: flex;</span></p>
-<p class="p1"><span class="s1">            gap: 4px;</span></p>
-<p class="p1"><span class="s1">        }</span></p>
-<p class="p1"><span class="s1">        .btn {</span></p>
-<p class="p1"><span class="s1">            flex: 1;</span></p>
-<p class="p1"><span class="s1">            padding: 6px 10px;</span></p>
-<p class="p1"><span class="s1">            font-size: 12px;</span></p>
-<p class="p1"><span class="s1">            font-weight: 600;</span></p>
-<p class="p1"><span class="s1">            border: 1px solid #cbd5e1;</span></p>
-<p class="p1"><span class="s1">            background: #fff;</span></p>
-<p class="p1"><span class="s1">            border-radius: 4px;</span></p>
-<p class="p1"><span class="s1">            cursor: pointer;</span></p>
-<p class="p1"><span class="s1">            transition: all 0.2s;</span></p>
-<p class="p1"><span class="s1">        }</span></p>
-<p class="p1"><span class="s1">        .btn:hover { background: #f1f5f9; }</span></p>
-<p class="p1"><span class="s1">        .btn.active-win {</span></p>
-<p class="p1"><span class="s1">            background: #22c55e;</span></p>
-<p class="p1"><span class="s1">            color: white;</span></p>
-<p class="p1"><span class="s1">            border-color: #16a34a;</span></p>
-<p class="p1"><span class="s1">        }</span></p>
-<p class="p1"><span class="s1">        .btn.active-loss {</span></p>
-<p class="p1"><span class="s1">            background: #ef4444;</span></p>
-<p class="p1"><span class="s1">            color: white;</span></p>
-<p class="p1"><span class="s1">            border-color: #dc2626;</span></p>
-<p class="p1"><span class="s1">        }</span></p>
-<p class="p1"><span class="s1">        .btn-reset {</span></p>
-<p class="p1"><span class="s1">            width: 100%;</span></p>
-<p class="p1"><span class="s1">            padding: 10px;</span></p>
-<p class="p1"><span class="s1">            background: #0f2c59;</span></p>
-<p class="p1"><span class="s1">            color: white;</span></p>
-<p class="p1"><span class="s1">            border: none;</span></p>
-<p class="p1"><span class="s1">            border-radius: 6px;</span></p>
-<p class="p1"><span class="s1">            font-weight: bold;</span></p>
-<p class="p1"><span class="s1">            cursor: pointer;</span></p>
-<p class="p1"><span class="s1">            margin-top: 10px;</span></p>
-<p class="p1"><span class="s1">        }</span></p>
-<p class="p1"><span class="s1">        .btn-reset:hover { background: #1e40af; }</span></p>
-<p class="p1"><span class="s1">        table {</span></p>
-<p class="p1"><span class="s1">            width: 100%;</span></p>
-<p class="p1"><span class="s1">            border-collapse: collapse;</span></p>
-<p class="p1"><span class="s1">            margin-top: 10px;</span></p>
-<p class="p1"><span class="s1">        }</span></p>
-<p class="p1"><span class="s1">        th, td {</span></p>
-<p class="p1"><span class="s1">            text-align: left;</span></p>
-<p class="p1"><span class="s1">            padding: 12px;</span></p>
-<p class="p1"><span class="s1">            border-bottom: 1px solid #e2e8f0;</span></p>
-<p class="p1"><span class="s1">            font-size: 14px;</span></p>
-<p class="p1"><span class="s1">        }</span></p>
-<p class="p1"><span class="s1">        th {</span></p>
-<p class="p1"><span class="s1">            background-color: #0f2c59;</span></p>
-<p class="p1"><span class="s1">            color: white;</span></p>
-<p class="p1"><span class="s1">        }</span></p>
-<p class="p1"><span class="s1">        tr:hover { background-color: #f8fafc; }</span></p>
-<p class="p1"><span class="s1">        .badge {</span></p>
-<p class="p1"><span class="s1">            display: inline-block;</span></p>
-<p class="p1"><span class="s1">            padding: 4px 8px;</span></p>
-<p class="p1"><span class="s1">            border-radius: 12px;</span></p>
-<p class="p1"><span class="s1">            font-size: 12px;</span></p>
-<p class="p1"><span class="s1">            font-weight: bold;</span></p>
-<p class="p1"><span class="s1">        }</span></p>
-<p class="p1"><span class="s1">        .badge-green { background: #dcfce7; color: #15803d; }</span></p>
-<p class="p1"><span class="s1">        .badge-yellow { background: #fef9c3; color: #a16207; }</span></p>
-<p class="p1"><span class="s1">        .badge-red { background: #fee2e2; color: #b91c1c; }</span></p>
-<p class="p1"><span class="s1">        .matrix-cell {</span></p>
-<p class="p1"><span class="s1">            font-size: 12px;</span></p>
-<p class="p1"><span class="s1">            line-height: 1.4;</span></p>
-<p class="p1"><span class="s1">        }</span></p>
-<p class="p1"><span class="s1">        .win-text { color: #16a34a; font-weight: 600; }</span></p>
-<p class="p1"><span class="s1">        .loss-text { color: #dc2626; font-weight: 600; }</span></p>
-<p class="p1"><span class="s1">    &lt;/style&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/head&gt;</span></p>
-<p class="p1"><span class="s1">&lt;body&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">&lt;div class="container"&gt;</span></p>
-<p class="p1"><span class="s1">    &lt;h1&gt;Hyderabad Padel League (HPL)&lt;/h1&gt;</span></p>
-<p class="p1"><span class="s1">    &lt;h2&gt;Dynamic Qualification Matrix &amp; Live Standings Tracker&lt;/h2&gt;</span></p>
-<p class="p1"><span class="s1">    &lt;p&gt;Toggle the results of the remaining fixtures in the sidebar. The simulator will compute all mathematical permutations in real-time to update the qualification percentages for the top 4 playoffs.&lt;/p&gt;</span></p>
-<p class="p1"><span class="s1">    </span></p>
-<p class="p1"><span class="s1">    &lt;div class="grid"&gt;</span></p>
-<p class="p1"><span class="s1">        &lt;!-- Sidebar Fixture Controls --&gt;</span></p>
-<p class="p1"><span class="s1">        &lt;div class="fixtures-card"&gt;</span></p>
-<p class="p1"><span class="s1">            &lt;h2&gt;Simulate Results&lt;/h2&gt;</span></p>
-<p class="p1"><span class="s1">            &lt;button class="btn-reset" onclick="resetFixtures()"&gt;Reset All Matches&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1">            &lt;div id="fixture-list" style="margin-top: 15px;"&gt;&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1">        &lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">        &lt;!-- Main Display Table --&gt;</span></p>
-<p class="p1"><span class="s1">        &lt;div&gt;</span></p>
-<p class="p1"><span class="s1">            &lt;h2&gt;Live Standings &amp; Matrix Outlook&lt;/h2&gt;</span></p>
-<p class="p1"><span class="s1">            &lt;table&gt;</span></p>
-<p class="p1"><span class="s1">                &lt;thead&gt;</span></p>
-<p class="p1"><span class="s1">                    &lt;tr&gt;</span></p>
-<p class="p1"><span class="s1">                        &lt;th&gt;Pos&lt;/th&gt;</span></p>
-<p class="p1"><span class="s1">                        &lt;th&gt;Team&lt;/th&gt;</span></p>
-<p class="p1"><span class="s1">                        &lt;th&gt;Current Pts&lt;/th&gt;</span></p>
-<p class="p1"><span class="s1">                        &lt;th&gt;Projected Top 4 Chance&lt;/th&gt;</span></p>
-<p class="p1"><span class="s1">                        &lt;th&gt;Matchday 4 Matrix If...&lt;/th&gt;</span></p>
-<p class="p1"><span class="s1">                        &lt;th&gt;Matchday 5 Matrix If...&lt;/th&gt;</span></p>
-<p class="p1"><span class="s1">                    &lt;/tr&gt;</span></p>
-<p class="p1"><span class="s1">                &lt;/thead&gt;</span></p>
-<p class="p1"><span class="s1">                &lt;tbody id="standings-body"&gt;&lt;/tbody&gt;</span></p>
-<p class="p1"><span class="s1">            &lt;/table&gt;</span></p>
-<p class="p1"><span class="s1">        &lt;/div&gt;</span></p>
-<p class="p1"><span class="s1">    &lt;/div&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">&lt;script&gt;</span></p>
-<p class="p1"><span class="s1">    // Initial League State</span></p>
-<p class="p1"><span class="s1">    const teams = {</span></p>
-<p class="p1"><span class="s1">        "White Horse": { currentPts: 6, mw: 9 },</span></p>
-<p class="p1"><span class="s1">        "HY Panthers": { currentPts: 6, mw: 11 },</span></p>
-<p class="p1"><span class="s1">        "HY Rollers": { currentPts: 4, mw: 8 },</span></p>
-<p class="p1"><span class="s1">        "Senses United": { currentPts: 4, mw: 7 },</span></p>
-<p class="p1"><span class="s1">        "Kiwi Stars": { currentPts: 2, mw: 6 },</span></p>
-<p class="p1"><span class="s1">        "Apex Strikers": { currentPts: 2, mw: 7 },</span></p>
-<p class="p1"><span class="s1">        "Anvita Aces": { currentPts: 0, mw: 6 }</span></p>
-<p class="p1"><span class="s1">    };</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">    // Remaining schedule mapping</span></p>
-<p class="p1"><span class="s1">    const fixtures = [</span></p>
-<p class="p1"><span class="s1">        // Matchday 4</span></p>
-<p class="p1"><span class="s1">        { id: 0, md: 4, t1: "White Horse", t2: "Senses United", outcome: null },</span></p>
-<p class="p1"><span class="s1">        { id: 1, md: 4, t1: "Anvita Aces", t2: "HY Panthers", outcome: null },</span></p>
-<p class="p1"><span class="s1">        { id: 2, md: 4, t1: "White Horse", t2: "HY Rollers", outcome: null },</span></p>
-<p class="p1"><span class="s1">        { id: 3, md: 4, t1: "Apex Strikers", t2: "Kiwi Stars", outcome: null },</span></p>
-<p class="p1"><span class="s1">        // Matchday 5</span></p>
-<p class="p1"><span class="s1">        { id: 4, md: 5, t1: "Senses United", t2: "HY Rollers", outcome: null },</span></p>
-<p class="p1"><span class="s1">        { id: 5, md: 5, t1: "Kiwi Stars", t2: "HY Panthers", outcome: null },</span></p>
-<p class="p1"><span class="s1">        { id: 6, md: 5, t1: "Kiwi Stars", t2: "HY Rollers", outcome: null },</span></p>
-<p class="p1"><span class="s1">        { id: 7, md: 5, t1: "Senses United", t2: "Anvita Aces", outcome: null },</span></p>
-<p class="p1"><span class="s1">        { id: 8, md: 5, t1: "Apex Strikers", t2: "White Horse", outcome: null }</span></p>
-<p class="p1"><span class="s1">    ];</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">    function renderFixtures() {</span></p>
-<p class="p1"><span class="s1">        const container = document.getElementById('fixture-list');</span></p>
-<p class="p1"><span class="s1">        container.innerHTML = '';</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">        [4, 5].forEach(md =&gt; {</span></p>
-<p class="p1"><span class="s1">            const group = document.createElement('div');</span></p>
-<p class="p1"><span class="s1">            group.className = 'match-group';</span></p>
-<p class="p1"><span class="s1">            group.innerHTML = `&lt;h3&gt;Matchday ${md}&lt;/h3&gt;`;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">            fixtures.filter(f =&gt; f.md === md).forEach(f =&gt; {</span></p>
-<p class="p1"><span class="s1">                const row = document.createElement('div');</span></p>
-<p class="p1"><span class="s1">                row.className = 'fixture-row';</span></p>
-<p class="p1"><span class="s1">                row.innerHTML = `</span></p>
-<p class="p1"><span class="s1">                    &lt;div class="teams-label"&gt;${f.t1} vs ${f.t2}&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1">                    &lt;div class="btn-group"&gt;</span></p>
-<p class="p1"><span class="s1">                        &lt;button class="btn ${f.outcome === 't1' ? 'active-win' : ''}" onclick="setOutcome(${<a href="http://f.id/"><span class="s2">f.id</span></a>}, 't1')"&gt;${f.t1} Win&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1">                        &lt;button class="btn ${f.outcome === 't2' ? 'active-win' : ''}" onclick="setOutcome(${<a href="http://f.id/"><span class="s2">f.id</span></a>}, 't2')"&gt;${f.t2} Win&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1">                    &lt;/div&gt;</span></p>
-<p class="p1"><span class="s1">                `;</span></p>
-<p class="p1"><span class="s1">                group.appendChild(row);</span></p>
-<p class="p1"><span class="s1">            });</span></p>
-<p class="p1"><span class="s1">            container.appendChild(group);</span></p>
-<p class="p1"><span class="s1">        });</span></p>
-<p class="p1"><span class="s1">    }</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">    function setOutcome(id, winner) {</span></p>
-<p class="p1"><span class="s1">        const fixture = fixtures.find(f =&gt; <a href="http://f.id/"><span class="s2">f.id</span></a> === id);</span></p>
-<p class="p1"><span class="s1">        fixture.outcome = fixture.outcome === winner ? null : winner;</span></p>
-<p class="p1"><span class="s1">        renderFixtures();</span></p>
-<p class="p1"><span class="s1">        calculateProbabilities();</span></p>
-<p class="p1"><span class="s1">    }</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">    function resetFixtures() {</span></p>
-<p class="p1"><span class="s1">        fixtures.forEach(f =&gt; f.outcome = null);</span></p>
-<p class="p1"><span class="s1">        renderFixtures();</span></p>
-<p class="p1"><span class="s1">        calculateProbabilities();</span></p>
-<p class="p1"><span class="s1">    }</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">    function calculateProbabilities() {</span></p>
-<p class="p1"><span class="s1">        const uncalculatedFixtures = fixtures.filter(f =&gt; f.outcome === null);</span></p>
-<p class="p1"><span class="s1">        const permutationsCount = Math.pow(2, uncalculatedFixtures.length);</span></p>
-<p class="p1"><span class="s1">        </span></p>
-<p class="p1"><span class="s1">        const qualificationCounts = {};</span></p>
-<p class="p1"><span class="s1">        Object.keys(teams).forEach(t =&gt; qualificationCounts[t] = 0);</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">        // Helper matrix probabilities data structure</span></p>
-<p class="p1"><span class="s1">        const matrixData = {};</span></p>
-<p class="p1"><span class="s1">        Object.keys(teams).forEach(t =&gt; {</span></p>
-<p class="p1"><span class="s1">            matrixData[t] = { md4_win: 0, md4_loss: 0, md5_win: 0, md5_loss: 0, md4_total: 0, md5_total: 0 };</span></p>
-<p class="p1"><span class="s1">        });</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">        // Run full permutation analysis loop</span></p>
-<p class="p1"><span class="s1">        for (let i = 0; i &lt; permutationsCount; i++) {</span></p>
-<p class="p1"><span class="s1">            const currentStandings = {};</span></p>
-<p class="p1"><span class="s1">            Object.keys(teams).forEach(t =&gt; currentStandings[t] = { pts: teams[t].currentPts, mw: teams[t].mw });</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">            // Apply fixed user-toggled items</span></p>
-<p class="p1"><span class="s1">            fixtures.filter(f =&gt; f.outcome !== null).forEach(f =&gt; {</span></p>
-<p class="p1"><span class="s1">                if (f.outcome === 't1') { currentStandings[f.t1].pts += 2; currentStandings[f.t1].mw += 2; }</span></p>
-<p class="p1"><span class="s1">                else { currentStandings[f.t2].pts += 2; currentStandings[f.t2].mw += 2; }</span></p>
-<p class="p1"><span class="s1">            });</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">            // Distribute permutation results</span></p>
-<p class="p1"><span class="s1">            let temp = i;</span></p>
-<p class="p1"><span class="s1">            let currentPermMatches = [];</span></p>
-<p class="p1"><span class="s1">            uncalculatedFixtures.forEach(f =&gt; {</span></p>
-<p class="p1"><span class="s1">                const winner = (temp % 2 === 0) ? f.t1 : f.t2;</span></p>
-<p class="p1"><span class="s1">                currentStandings[winner].pts += 2;</span></p>
-<p class="p1"><span class="s1">                currentStandings[winner].mw += 2; // Approximate match allocation weight</span></p>
-<p class="p1"><span class="s1">                currentPermMatches.push({ fId: <a href="http://f.id/"><span class="s2">f.id</span></a>, md: f.md, t1: f.t1, t2: f.t2, winner: winner });</span></p>
-<p class="p1"><span class="s1">                temp = Math.floor(temp / 2);</span></p>
-<p class="p1"><span class="s1">            });</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1">            // Rank current league standing calculation</span></p>
-<p class="p1"><span class="s1">            const ranked = Object.keys(currentStandings).sort((a, b) =&gt; {</span></p>
-<p class="p1"><span class="s1">                if (currentStandings[b].pts !== currentStandings[a].pts) {</span></p>
-<p class="p1"><span class="s1">                    return currentStandings[b].pts - currentStandings[a].pts;</span></p>
-</body>
-</html>
+
+<div class="container">
+    <h1>Hyderabad Padel League (HPL)</h1>
+    <h2>Dynamic Qualification Matrix & Live Standings Tracker</h2>
+    <p>Toggle the results of the remaining fixtures in the sidebar. The simulator will compute all mathematical permutations in real-time to update the qualification percentages for the top 4 playoffs.</p>
+   
+    <div class="grid">
+        <!-- Sidebar Fixture Controls -->
+        <div class="fixtures-card">
+            <h2>Simulate Results</h2>
+            <button class="btn-reset" onclick="resetFixtures()">Reset All Matches</button>
+            <div id="fixture-list" style="margin-top: 15px;"></div>
+        </div>
+
+        <!-- Main Display Table -->
+        <div>
+            <h2>Live Standings & Matrix Outlook</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Pos</th>
+                        <th>Team</th>
+                        <th>Current Pts</th>
+                        <th>Projected Top 4 Chance</th>
+                        <th>Matchday 4 Matrix If...</th>
+                        <th>Matchday 5 Matrix If...</th>
+                    </tr>
+                </thead>
+                <tbody id="standings-body"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Initial League State
+    const teams = {
+        "White Horse": { currentPts: 6, mw: 9 },
+        "HY Panthers": { currentPts: 6, mw: 11 },
+        "HY Rollers": { currentPts: 4, mw: 8 },
+        "Senses United": { currentPts: 4, mw: 7 },
+        "Kiwi Stars": { currentPts: 2, mw: 6 },
+        "Apex Strikers": { currentPts: 2, mw: 7 },
+        "Anvita Aces": { currentPts: 0, mw: 6 }
+    };
+
+    // Remaining schedule mapping
+    const fixtures = [
+        // Matchday 4
+        { id: 0, md: 4, t1: "White Horse", t2: "Senses United", outcome: null },
+        { id: 1, md: 4, t1: "Anvita Aces", t2: "HY Panthers", outcome: null },
+        { id: 2, md: 4, t1: "White Horse", t2: "HY Rollers", outcome: null },
+        { id: 3, md: 4, t1: "Apex Strikers", t2: "Kiwi Stars", outcome: null },
+        // Matchday 5
+        { id: 4, md: 5, t1: "Senses United", t2: "HY Rollers", outcome: null },
+        { id: 5, md: 5, t1: "Kiwi Stars", t2: "HY Panthers", outcome: null },
+        { id: 6, md: 5, t1: "Kiwi Stars", t2: "HY Rollers", outcome: null },
+        { id: 7, md: 5, t1: "Senses United", t2: "Anvita Aces", outcome: null },
+        { id: 8, md: 5, t1: "Apex Strikers", t2: "White Horse", outcome: null }
+    ];
+
+    function renderFixtures() {
+        const container = document.getElementById('fixture-list');
+        container.innerHTML = '';
+
+        [4, 5].forEach(md => {
+            const group = document.createElement('div');
+            group.className = 'match-group';
+            group.innerHTML = `<h3>Matchday ${md}</h3>`;
+
+            fixtures.filter(f => f.md === md).forEach(f => {
+                const row = document.createElement('div');
+                row.className = 'fixture-row';
+                row.innerHTML = `
+                    <div class="teams-label">${f.t1} vs ${f.t2}</div>
+                    <div class="btn-group">
+                        <button class="btn ${f.outcome === 't1' ? 'active-win' : ''}" onclick="setOutcome(${f.id}, 't1')">${f.t1} Win</button>
+                        <button class="btn ${f.outcome === 't2' ? 'active-win' : ''}" onclick="setOutcome(${f.id}, 't2')">${f.t2} Win</button>
+                    </div>
+                `;
+                group.appendChild(row);
+            });
+            container.appendChild(group);
+        });
+    }
+
+    function setOutcome(id, winner) {
+        const fixture = fixtures.find(f => f.id === id);
+        fixture.outcome = fixture.outcome === winner ? null : winner;
+        renderFixtures();
+        calculateProbabilities();
+    }
+
+    function resetFixtures() {
+        fixtures.forEach(f => f.outcome = null);
+        renderFixtures();
+        calculateProbabilities();
+    }
+
+    function calculateProbabilities() {
+        const uncalculatedFixtures = fixtures.filter(f => f.outcome === null);
+        const permutationsCount = Math.pow(2, uncalculatedFixtures.length);
+       
+        const qualificationCounts = {};
+        Object.keys(teams).forEach(t => qualificationCounts[t] = 0);
+
+        const matrixData = {};
+        Object.keys(teams).forEach(t => {
+            matrixData[t] = { md4_win: 0, md4_loss: 0, md5_win: 0, md5_loss: 0, md4_total: 0, md5_total: 0 };
+        });
+
+        for (let i = 0; i < permutationsCount; i++) {
+            const currentStandings = {};
+            Object.keys(teams).forEach(t => currentStandings[t] = { pts: teams[t].currentPts, mw: teams[t].mw });
+
+            fixtures.filter(f => f.outcome !== null).forEach(f => {
+                if (f.outcome === 't1') { currentStandings[f.t1].pts += 2; currentStandings[f.t1].mw += 2; }
+                else { currentStandings[f.t2].pts += 2; currentStandings[f.t2].mw += 2; }
+            });
+
+            let temp = i;
+            let currentPermMatches = [];
+            uncalculatedFixtures.forEach(f => {
+                const winner = (temp % 2 === 0) ? f.t1 : f.t2;
+                currentStandings[winner].pts += 2;
+                currentStandings[winner].mw += 2;
+                currentPermMatches.push({ fId: f.id, md: f.md, t1: f.t1, t2: f.t2, winner: winner });
+                temp = Math.floor(temp / 2);
+            });
+
+            const ranked = Object.keys(currentStandings).sort((a, b) => {
+                if (currentStandings[b].pts !== currentStandings[a].pts) {
+                    return currentStandings[b].pts - currentStandings[a].pts;
+                }
+                return currentStandings[b].mw - currentStandings[a].mw;
+            });
+
+            const top4 = ranked.slice(0, 4);
+            top4.forEach(team => qualificationCounts[team]++);
+
+            currentPermMatches.forEach(m => {
+                const t1Qualified = top4.includes(m.t1);
