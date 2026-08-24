@@ -30,46 +30,42 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg);
             color: var(--text);
-            padding: 12px;
+            padding: 16px;
             line-height: 1.4;
         }
 
         .container {
-            max-width: 100%;
+            max-width: 1200px;
             margin: 0 auto;
         }
 
         header {
-            text-align: center;
-            margin-bottom: 16px;
             background: var(--surface);
-            padding: 16px;
+            padding: 20px;
             border-radius: 12px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
             position: relative;
+            text-align: center;
         }
 
         .visit-counter {
             position: absolute;
-            top: 10px;
-            right: 12px;
+            top: 12px;
+            right: 16px;
             background: #f1f5f9;
             border: 1px solid var(--border);
-            padding: 4px 8px;
+            padding: 4px 10px;
             border-radius: 20px;
             font-size: 11px;
             font-weight: 600;
             color: var(--text-muted);
-            display: flex;
-            align-items: center;
-            gap: 4px;
         }
 
         h1 {
-            font-size: 20px;
+            font-size: 22px;
             color: var(--primary);
             margin-bottom: 4px;
-            margin-top: 10px;
         }
 
         h2 {
@@ -79,153 +75,92 @@
         }
 
         .btn-reset {
-            width: 100%;
-            padding: 12px;
             background: var(--primary);
             color: white;
             border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-bottom: 16px;
-            box-shadow: 0 2px 4px rgba(15, 44, 89, 0.2);
-        }
-
-        .tabs {
-            display: flex;
-            background: #e2e8f0;
-            padding: 4px;
-            border-radius: 8px;
-            margin-bottom: 16px;
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            background: transparent;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-muted);
+            padding: 8px 16px;
             border-radius: 6px;
-            cursor: pointer;
-        }
-
-        .tab-btn.active {
-            background: var(--surface);
-            color: var(--primary);
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .match-group h3 {
-            font-size: 14px;
-            color: var(--primary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin: 12px 4px 8px 4px;
-        }
-
-        .fixture-row {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 12px;
-            margin-bottom: 10px;
-        }
-
-        .teams-label {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text);
-            text-align: center;
-            margin-bottom: 10px;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 8px;
-        }
-
-        .btn {
-            flex: 1;
-            padding: 10px;
             font-size: 13px;
             font-weight: 600;
-            border: 1px solid var(--border);
-            background: var(--surface);
-            color: var(--text);
-            border-radius: 6px;
             cursor: pointer;
+            display: inline-block;
+            margin-top: 10px;
         }
 
-        .btn.active-win {
-            background: var(--win);
-            color: white;
-            border-color: var(--win-dark);
+        /* Simplified Two-Column Dashboard Layout */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
         }
 
-        .team-card {
+        @media (min-width: 850px) {
+            .dashboard-grid {
+                grid-template-columns: 1.2fr 1fr;
+            }
+        }
+
+        .card {
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: 12px;
-            padding: 14px;
-            margin-bottom: 12px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
         }
 
-        .team-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border);
+        .card h2 {
+            font-size: 16px;
+            color: var(--primary);
+            border-bottom: 2px solid var(--border);
             padding-bottom: 8px;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            font-weight: 700;
         }
 
-        .team-identity {
+        /* Team Row Styles */
+        .team-row {
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: space-between;
+            padding: 12px 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .team-row:last-child {
+            border-bottom: none;
+        }
+
+        .team-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
         }
 
         .team-rank {
-            background: #edf2f7;
-            color: var(--primary);
             font-weight: 700;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            font-size: 12px;
+            color: var(--text-muted);
+            width: 20px;
         }
 
         .team-name {
-            font-size: 15px;
             font-weight: 700;
             color: var(--primary);
+            font-size: 14px;
         }
 
-        .team-pts {
-            font-size: 13px;
-            font-weight: 600;
+        .team-stats {
+            font-size: 12px;
             color: var(--text-muted);
         }
 
-        .badge {
-            padding: 6px 10px;
-            border-radius: 20px;
-            font-size: 13px;
+        .probability-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
             font-weight: 700;
+            min-width: 60px;
+            text-align: center;
         }
 
         .badge-green { 
@@ -243,25 +178,13 @@
             color: #b91c1c; 
         }
 
-        .matrix-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            background: #f8fafc;
-            padding: 10px;
-            border-radius: 8px;
+        .lookahead-box {
+            font-size: 11px;
+            text-align: right;
+            line-height: 1.3;
+            min-width: 110px;
         }
 
-        .matrix-box { 
-            font-size: 12px; 
-        }
-        
-        .matrix-title { 
-            font-weight: 600; 
-            color: var(--text-muted); 
-            margin-bottom: 4px; 
-        }
-        
         .win-text { 
             color: var(--win-dark); 
             font-weight: 600; 
@@ -272,54 +195,99 @@
             font-weight: 600; 
         }
 
-        /* Contact Section Styling */
-        .contact-section {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 24px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
-        }
-
-        .contact-section h3 {
-            color: var(--primary);
-            font-size: 16px;
-            margin-bottom: 6px;
-        }
-
-        .contact-section p {
+        /* Fixtures Alignment */
+        .md-header {
+            font-size: 12px;
             color: var(--text-muted);
+            background: #f8fafc;
+            padding: 4px 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-top: 12px;
+            border-radius: 4px;
+        }
+
+        .fixture-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 4px;
+            border-bottom: 1px solid #f1f5f9;
+            gap: 10px;
+        }
+
+        .fixture-label {
             font-size: 13px;
-            margin-bottom: 14px;
+            font-weight: 600;
+            flex: 1;
         }
 
-        .form-group {
-            margin-bottom: 12px;
+        .toggle-group {
+            display: flex;
+            gap: 4px;
         }
 
-        .form-group input, 
-        .form-group textarea {
+        .btn-toggle {
+            padding: 6px 10px;
+            font-size: 11px;
+            font-weight: 700;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-toggle.active-win {
+            background: var(--win);
+            color: white;
+            border-color: var(--win-dark);
+        }
+
+        /* Contact Box Extension */
+        .contact-box {
+            margin-top: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        @media (min-width: 600px) {
+            .form-row { 
+                grid-template-columns: 1fr 1fr; 
+            }
+        }
+
+        .form-input {
             width: 100%;
-            padding: 10px 12px;
+            padding: 8px 12px;
             border: 1px solid var(--border);
             border-radius: 6px;
             font-size: 13px;
-            font-family: inherit;
-            color: var(--text);
             outline: none;
+            font-family: inherit;
         }
 
-        .form-group input:focus, 
-        .form-group textarea:focus {
-            border-color: var(--primary-light);
+        .form-textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 13px;
+            outline: none;
+            font-family: inherit;
+            resize: vertical;
+            margin-bottom: 10px;
         }
 
         .btn-submit {
             background: var(--primary);
             color: white;
             border: none;
-            padding: 10px 16px;
+            padding: 10px;
             font-size: 13px;
             font-weight: 600;
             border-radius: 6px;
@@ -327,42 +295,11 @@
             width: 100%;
         }
 
-        .btn-submit:hover {
-            background: var(--primary-light);
-        }
-
         footer {
             text-align: center;
-            padding: 20px 15px;
+            padding: 24px;
             font-size: 11px;
             color: var(--text-muted);
-        }
-
-        @media (min-width: 768px) {
-            body { 
-                padding: 24px; 
-            }
-            .tabs { 
-                display: none; 
-            }
-            .tab-content { 
-                display: grid !important; 
-                grid-template-columns: 320px 1fr; 
-                gap: 24px; 
-            }
-            h1 { 
-                font-size: 24px; 
-                margin-top: 0; 
-            }
-            .team-card-container { 
-                display: grid; 
-                grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); 
-                gap: 16px; 
-            }
-            .contact-section { 
-                max-width: 500px; 
-                margin: 24px auto 0 auto; 
-            }
         }
     </style>
 </head>
@@ -372,71 +309,74 @@
     <header>
         <div class="visit-counter">Views: <span id="count">...</span></div>
         <h1>HPL Qualification Tracker</h1>
-        <h2>Dynamic Bracket & Playoff Probabilities</h2>
+        <h2>Playoff Standings & Lookahead Analytics</h2>
+        <button class="btn-reset" onclick="resetFixtures()">Reset Simulator</button>
     </header>
 
-    <button class="btn-reset" onclick="resetFixtures()">Reset All Matches</button>
+    <div class="dashboard-grid">
+        <!-- LEFT COLUMN: Standings Matrices -->
+        <div class="card">
+            <h2>Live Standings & Probabilities</h2>
+            <div id="standings-list"></div>
+        </div>
 
-    <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('standings-tab', this)">Standings & Matrix</button>
-        <button class="tab-btn" onclick="switchTab('fixtures-tab', this)">Simulate Fixtures</button>
+        <!-- RIGHT COLUMN: Fixture Controls -->
+        <div class="card">
+            <h2>Simulate Upcoming Ties</h2>
+            <div id="fixture-list"></div>
+        </div>
     </div>
 
-    <div id="standings-tab" class="tab-content active">
-        <div class="team-card-container" id="cards-container"></div>
-    </div>
-
-    <div id="fixtures-tab" class="tab-content">
-        <div id="fixture-list"></div>
-    </div>
-    
-    <!-- Contact Form Integration Layer -->
-    <div class="contact-section">
-        <h3>Share Your Sports Insights</h3>
-        <p>Leave your contact information along with your analysis or unique perspectives on the league pairings below!</p>
-        
+    <!-- BOTTOM ROW: Contact Insights -->
+    <div class="card contact-box">
+        <h2>Share Your Sports Insights</h2>
         <form action="https://api.web3forms.com/submit" method="POST">
-            <!-- Access token configured for web3forms submission -->
             <input type="hidden" name="access_key" value="ec78615e-4d6e-4326-a764-daa9b399cbf9">
+            <input type="hidden" name="subject" value="New HPL Sports Insight Submission">
             
-            <div class="form-group">
-                <input type="text" name="name" placeholder="Your Name" required>
+            <div class="form-row">
+                <input type="text" name="name" class="form-input" placeholder="Your Name" required>
+                <input type="email" name="email" class="form-input" placeholder="Your Email / Phone" required>
             </div>
-            <div class="form-group">
-                <input type="email" name="email" placeholder="Your Email" required>
-            </div>
-            <div class="form-group">
-                <textarea name="message" rows="3" placeholder="Your Analysis / Feedback" required></textarea>
-            </div>
+            <textarea name="insights" class="form-textarea" rows="2" placeholder="Drop your prediction notes or analysis on team matchups..." required></textarea>
             <button type="submit" class="btn-submit">Submit Insights</button>
         </form>
     </div>
 
     <footer>
-        &copy; Hyderabad Padel League (HPL) Qualification Simulator
+        &copy; Hyderabad Padel League
     </footer>
 </div>
 
 <script>
-    // Initial League State
+    function updateCounter() {
+        const namespace = window.location.hostname + window.location.pathname.replace(/\//g, '_');
+        fetch(`https://countapi.xyz/hit/${namespace}/visits`)
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('count').innerText = data.value || "1";
+            })
+            .catch(() => {
+                document.getElementById('count').innerText = "Active";
+            });
+    }
+
+    // Static baseline config mapped correctly to Matchday 3 official Instagram standings
     const teams = {
-        "White Horse": { currentPts: 6, mw: 9 },
-        "HY Panthers": { currentPts: 6, mw: 11 },
-        "HY Rollers": { currentPts: 4, mw: 8 },
-        "Senses United": { currentPts: 4, mw: 7 },
-        "Kiwi Stars": { currentPts: 2, mw: 6 },
-        "Apex Strikers": { currentPts: 2, mw: 7 },
-        "Anvita Aces": { currentPts: 0, mw: 6 }
+        "White Horse": { currentPts: 6, mw: 9, initialOrder: 1 },
+        "HY Panthers": { currentPts: 6, mw: 11, initialOrder: 2 },
+        "HY Rollers": { currentPts: 4, mw: 8, initialOrder: 3 },
+        "Senses United": { currentPts: 4, mw: 7, initialOrder: 4 },
+        "Kiwi Stars": { currentPts: 2, mw: 6, initialOrder: 5 },
+        "Apex Strikers": { currentPts: 2, mw: 7, initialOrder: 6 }, 
+        "Anvita Aces": { currentPts: 0, mw: 6, initialOrder: 7 }
     };
 
-    // Remaining schedule mapping
     const fixtures = [
-        // Matchday 4
         { id: 0, md: 4, t1: "White Horse", t2: "Senses United", outcome: null },
         { id: 1, md: 4, t1: "Anvita Aces", t2: "HY Panthers", outcome: null },
         { id: 2, md: 4, t1: "White Horse", t2: "HY Rollers", outcome: null },
         { id: 3, md: 4, t1: "Apex Strikers", t2: "Kiwi Stars", outcome: null },
-        // Matchday 5
         { id: 4, md: 5, t1: "Senses United", t2: "HY Rollers", outcome: null },
         { id: 5, md: 5, t1: "Kiwi Stars", t2: "HY Panthers", outcome: null },
         { id: 6, md: 5, t1: "Kiwi Stars", t2: "HY Rollers", outcome: null },
@@ -444,53 +384,34 @@
         { id: 8, md: 5, t1: "Apex Strikers", t2: "White Horse", outcome: null }
     ];
 
-    function switchTab(tabId, btn) {
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        
-        btn.classList.add('active');
-        document.getElementById(tabId).classList.add('active');
-    }
-
-    function updateCounter() {
-        const countElem = document.getElementById('count');
-        if (countElem) {
-            let views = localStorage.getItem('hpl_views') || 142;
-            views = parseInt(views) + 1;
-            localStorage.setItem('hpl_views', views);
-            countElem.innerText = views;
-        }
-    }
-
     function renderFixtures() {
         const container = document.getElementById('fixture-list');
-        if (!container) return;
         container.innerHTML = '';
 
         [4, 5].forEach(md => {
-            const group = document.createElement('div');
-            group.className = 'match-group';
-            group.innerHTML = `<h3>Matchday ${md}</h3>`;
+            const heading = document.createElement('div');
+            heading.className = 'md-header';
+            heading.innerText = `Matchday ${md}`;
+            container.appendChild(heading);
 
             fixtures.filter(f => f.md === md).forEach(f => {
-                const row = document.createElement('div');
-                row.className = 'fixture-row';
-                row.innerHTML = `
-                    <div class="teams-label">${f.t1} vs ${f.t2}</div>
-                    <div class="btn-group">
-                        <button class="btn ${f.outcome === 't1' ? 'active-win' : ''}" onclick="setOutcome(${f.id}, 't1')">${f.t1} Win</button>
-                        <button class="btn ${f.outcome === 't2' ? 'active-win' : ''}" onclick="setOutcome(${f.id}, 't2')">${f.t2} Win</button>
+                const item = document.createElement('div');
+                item.className = 'fixture-item';
+                item.innerHTML = `
+                    <div class="fixture-label">${f.t1} vs ${f.t2}</div>
+                    <div class="toggle-group">
+                        <button class="btn-toggle ${f.outcome === 't1' ? 'active-win' : ''}" onclick="setOutcome(${f.id}, 't1')">${f.t1}</button>
+                        <button class="btn-toggle ${f.outcome === 't2' ? 'active-win' : ''}" onclick="setOutcome(${f.id}, 't2')">${f.t2}</button>
                     </div>
                 `;
-                group.appendChild(row);
+                container.appendChild(item);
             });
-            container.appendChild(group);
         });
     }
 
     function setOutcome(id, winner) {
-        const fixture = fixtures.find(f => f.id === id);
-        fixture.outcome = fixture.outcome === winner ? null : winner;
+        const f = fixtures.find(item => item.id === id);
+        f.outcome = f.outcome === winner ? null : winner;
         renderFixtures();
         calculateProbabilities();
     }
@@ -502,15 +423,15 @@
     }
 
     function calculateProbabilities() {
-        const uncalculatedFixtures = fixtures.filter(f => f.outcome === null);
-        const permutationsCount = Math.pow(2, uncalculatedFixtures.length);
+        const uncalculated = fixtures.filter(f => f.outcome === null);
+        const permutations = Math.pow(2, uncalculated.length);
         
-        const qualificationCounts = {};
-        Object.keys(teams).forEach(t => (qualificationCounts[t] = 0));
+        const qualCounts = {};
+        Object.keys(teams).forEach(t => qualCounts[t] = 0);
 
-        const matrixData = {};
+        const matrix = {};
         Object.keys(teams).forEach(t => {
-            matrixData[t] = { 
+            matrix[t] = { 
                 md4_win: 0, 
                 md4_loss: 0, 
                 md5_win: 0, 
@@ -520,146 +441,112 @@
             };
         });
 
-        for (let i = 0; i < permutationsCount; i++) {
-            const currentStandings = {};
-            Object.keys(teams).forEach(t => {
-                currentStandings[t] = { pts: teams[t].currentPts, mw: teams[t].mw };
-            });
+        for (let i = 0; i < permutations; i++) {
+            const standings = {};
+            Object.keys(teams).forEach(t => standings[t] = { pts: teams[t].currentPts, mw: teams[t].mw });
 
             fixtures.filter(f => f.outcome !== null).forEach(f => {
                 if (f.outcome === 't1') { 
-                    currentStandings[f.t1].pts += 2; 
-                    currentStandings[f.t1].mw += 2; 
+                    standings[f.t1].pts += 2; 
+                    standings[f.t1].mw += 2; 
                 } else { 
-                    currentStandings[f.t2].pts += 2; 
-                    currentStandings[f.t2].mw += 2; 
+                    standings[f.t2].pts += 2; 
+                    standings[f.t2].mw += 2; 
                 }
             });
 
             let temp = i;
             let currentPermMatches = [];
-            uncalculatedFixtures.forEach(f => {
+            uncalculated.forEach(f => {
                 const winner = (temp % 2 === 0) ? f.t1 : f.t2;
-                currentStandings[winner].pts += 2;
-                currentStandings[winner].mw += 2;
-                currentPermMatches.push({ fId: f.id, md: f.md, t1: f.t1, t2: f.t2, winner: winner });
+                standings[winner].pts += 2;
+                standings[winner].mw += 2;
+                currentPermMatches.push({ md: f.md, t1: f.t1, t2: f.t2, winner: winner });
                 temp = Math.floor(temp / 2);
             });
 
-            const ranked = Object.keys(currentStandings).sort((a, b) => {
-                if (currentStandings[b].pts !== currentStandings[a].pts) {
-                    return currentStandings[b].pts - currentStandings[a].pts;
-                }
-                return currentStandings[b].mw - currentStandings[a].mw;
+            const ranked = Object.keys(standings).sort((a, b) => {
+                if (standings[b].pts !== standings[a].pts) return standings[b].pts - standings[a].pts;
+                if (standings[b].mw !== standings[a].mw) return standings[b].mw - standings[a].mw;
+                return teams[a].initialOrder - teams[b].initialOrder;
             });
 
             const top4 = ranked.slice(0, 4);
-            top4.forEach(team => qualificationCounts[team]++);
+            top4.forEach(team => qualCounts[team]++);
 
             currentPermMatches.forEach(m => {
-                const t1Qualified = top4.includes(m.t1);
-                const t2Qualified = top4.includes(m.t2);
+                const t1Qual = top4.includes(m.t1);
+                const t2Qual = top4.includes(m.t2);
                 const prefix = m.md === 4 ? 'md4' : 'md5';
 
                 if (m.winner === m.t1) {
-                    matrixData[m.t1][`${prefix}_win`] += t1Qualified ? 1 : 0;
-                    matrixData[m.t2][`${prefix}_loss`] += t2Qualified ? 1 : 0;
+                    matrix[m.t1][`${prefix}_win`] += t1Qual ? 1 : 0;
+                    matrix[m.t2][`${prefix}_loss`] += t2Qual ? 1 : 0;
                 } else {
-                    matrixData[m.t2][`${prefix}_win`] += t2Qualified ? 1 : 0;
-                    matrixData[m.t1][`${prefix}_loss`] += t1Qualified ? 1 : 0;
+                    matrix[m.t2][`${prefix}_win`] += t2Qual ? 1 : 0;
+                    matrix[m.t1][`${prefix}_loss`] += t1Qual ? 1 : 0;
                 }
 
-                matrixData[m.t1][`${prefix}_total`]++;
-                matrixData[m.t2][`${prefix}_total`]++;
+                matrix[m.t1][`${prefix}_total`]++;
+                matrix[m.t2][`${prefix}_total`]++;
             });
         }
 
-        renderCards(qualificationCounts, permutationsCount, matrixData);
+        renderStandingsList(qualCounts, permutations, matrix);
     }
 
-    function renderCards(counts, total, matrix) {
-        const container = document.getElementById('cards-container');
-        if (!container) return;
+    function renderStandingsList(counts, total, matrix) {
+        const container = document.getElementById('standings-list');
         container.innerHTML = '';
 
         const trackedScores = {};
         Object.keys(teams).forEach(t => {
             let pts = teams[t].currentPts;
-            fixtures
-                .filter(f => f.outcome !== null)
-                .forEach(f => {
-                    if (f.outcome === 't1' && f.t1 === t) pts += 2;
-                    if (f.outcome === 't2' && f.t2 === t) pts += 2;
-                });
+            fixtures.filter(f => f.outcome !== null).forEach(f => {
+                if (f.outcome === 't1' && f.t1 === t) pts += 2;
+                if (f.outcome === 't2' && f.t2 === t) pts += 2;
+            });
             trackedScores[t] = pts;
         });
 
-        const sortedTeams = Object.keys(teams).sort((a, b) => {
-            if (trackedScores[b] !== trackedScores[a]) {
-                return trackedScores[b] - trackedScores[a];
-            }
-            return teams[b].mw - teams[a].mw;
+        // Tie-breaker: 1. Points, 2. Matches Won (MW), 3. Original sorting
+        const sorted = Object.keys(teams).sort((a, b) => {
+            if (trackedScores[b] !== trackedScores[a]) return trackedScores[b] - trackedScores[a];
+            if (teams[b].mw !== teams[a].mw) return teams[b].mw - teams[a].mw;
+            return teams[a].initialOrder - teams[b].initialOrder;
         });
 
-        sortedTeams.forEach((team, idx) => {
-            const percentage = ((counts[team] / total) * 100).toFixed(1);
+        sorted.forEach((team, idx) => {
+            const pct = ((counts[team] / total) * 100).toFixed(1);
             let badgeClass = 'badge-yellow';
+            if (parseFloat(pct) >= 80) badgeClass = 'badge-green';
+            if (parseFloat(pct) <= 20) badgeClass = 'badge-red';
 
-            if (parseFloat(percentage) >= 80) badgeClass = 'badge-green';
-            if (parseFloat(percentage) <= 20) badgeClass = 'badge-red';
+            const md4WinPct = matrix[team].md4_total ? ((matrix[team].md4_win / (matrix[team].md4_total / 2)) * 100).toFixed(0) : pct;
+            const md4LossPct = matrix[team].md4_total ? ((matrix[team].md4_loss / (matrix[team].md4_total / 2)) * 100).toFixed(0) : pct;
+            const md5WinPct = matrix[team].md5_total ? ((matrix[team].md5_win / (matrix[team].md5_total / 2)) * 100).toFixed(0) : pct;
+            const md5LossPct = matrix[team].md5_total ? ((matrix[team].md5_loss / (matrix[team].md5_total / 2)) * 100).toFixed(0) : pct;
 
-            const md4WinPct = matrix[team].md4_total 
-                ? ((matrix[team].md4_win / (matrix[team].md4_total / 2)) * 100).toFixed(0) 
-                : percentage;
-            const md4LossPct = matrix[team].md4_total 
-                ? ((matrix[team].md4_loss / (matrix[team].md4_total / 2)) * 100).toFixed(0) 
-                : percentage;
-            const md5WinPct = matrix[team].md5_total 
-                ? ((matrix[team].md5_win / (matrix[team].md5_total / 2)) * 100).toFixed(0) 
-                : percentage;
-            const md5LossPct = matrix[team].md5_total 
-                ? ((matrix[team].md5_loss / (matrix[team].md5_total / 2)) * 100).toFixed(0) 
-                : percentage;
-
-            const card = document.createElement('div');
-            card.className = 'team-card';
-            card.innerHTML = `
-                <div class="team-header">
-                    <div class="team-identity">
-                        <div class="team-rank">${idx + 1}</div>
-                        <div>
-                            <div class="team-name">${team}</div>
-                            <div class="team-pts">${trackedScores[team]} Points</div>
-                        </div>
+            const row = document.createElement('div');
+            row.className = 'team-row';
+            row.innerHTML = `
+                <div class="team-meta">
+                    <div class="team-rank">${idx + 1}</div>
+                    <div>
+                        <div class="team-name">${team}</div>
+                        <div class="team-stats">${trackedScores[team]} Pts | ${teams[team].mw} MW</div>
                     </div>
-                    <span class="badge ${badgeClass}">${percentage}%</span>
                 </div>
-                <div class="matrix-grid">
-                    <div class="matrix-box">
-                        <div class="matrix-title">Matchday 4 Lookahead</div>
-                        <div>If Win: <span class="win-text">${md4WinPct}%</span></div>
-                        <div>If Lose: <span class="loss-text">${md4LossPct}%</span></div>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div class="lookahead-box">
+                        M4: <span class="win-text">W:${md4WinPct}%</span> <span class="loss-text">L:${md4LossPct}%</span><br>
+                        M5: <span class="win-text">W:${md5WinPct}%</span> <span class="loss-text">L:${md5LossPct}%</span>
                     </div>
-                    <div class="matrix-box">
-                        <div class="matrix-title">Matchday 5 Lookahead</div>
-                        <div>If Win: <span class="win-text">${md5WinPct}%</span></div>
-                        <div>If Lose: <span class="loss-text">${md5LossPct}%</span></div>
-                    </div>
+                    <div class="probability-badge ${badgeClass}">${pct}%</div>
                 </div>
             `;
-            container.appendChild(card);
+            container.appendChild(row);
         });
-    }
-
-    window.addEventListener('resize', () => {
-        if (window.innerWidth >= 768) {
-            document.getElementById('standings-tab').classList.add('active');
-            document.getElementById('fixtures-tab').classList.add('active');
-        }
-    });
-
-    if (window.innerWidth >= 768) {
-        document.getElementById('fixtures-tab').classList.add('active');
     }
 
     updateCounter();
