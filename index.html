@@ -87,7 +87,6 @@
             margin-top: 10px;
         }
 
-        /* Simplified Two-Column Dashboard Layout */
         .dashboard-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -117,7 +116,6 @@
             font-weight: 700;
         }
 
-        /* Team Row Styles */
         .team-row {
             display: flex;
             align-items: center;
@@ -167,12 +165,12 @@
             background: #dcfce7; 
             color: #15803d; 
         }
-        
+
         .badge-yellow { 
             background: #fef9c3; 
             color: #a16207; 
         }
-        
+
         .badge-red { 
             background: #fee2e2; 
             color: #b91c1c; 
@@ -189,13 +187,12 @@
             color: var(--win-dark); 
             font-weight: 600; 
         }
-        
+
         .loss-text { 
             color: var(--loss-dark); 
             font-weight: 600; 
         }
 
-        /* Fixtures Alignment */
         .md-header {
             font-size: 12px;
             color: var(--text-muted);
@@ -243,7 +240,6 @@
             border-color: var(--win-dark);
         }
 
-        /* Contact Box Extension */
         .contact-box {
             margin-top: 20px;
         }
@@ -314,24 +310,21 @@
     </header>
 
     <div class="dashboard-grid">
-        <!-- LEFT COLUMN: Standings Matrices -->
         <div class="card">
             <h2>Live Standings & Probabilities</h2>
             <div id="standings-list"></div>
         </div>
 
-        <!-- RIGHT COLUMN: Fixture Controls -->
         <div class="card">
             <h2>Simulate Upcoming Ties</h2>
             <div id="fixture-list"></div>
         </div>
     </div>
 
-    <!-- BOTTOM ROW: Contact Insights -->
     <div class="card contact-box">
         <h2>Share Your Sports Insights</h2>
         <form action="https://api.web3forms.com/submit" method="POST">
-            <input type="hidden" name="access_key" value="ec78615e-4d6e-4326-a764-daa9b399cbf9">
+            <input type="hidden" name="access_key" value="YOUR_WEB3FORMS_ACCESS_KEY_HERE">
             <input type="hidden" name="subject" value="New HPL Sports Insight Submission">
             
             <div class="form-row">
@@ -361,15 +354,15 @@
             });
     }
 
-    // Static baseline config mapped correctly to Matchday 3 official Instagram standings
+    // Baseline exact statistics pulled directly from official HPL Instagram Matchday 3 table
     const teams = {
-        "White Horse": { currentPts: 6, mw: 9, initialOrder: 1 },
-        "HY Panthers": { currentPts: 6, mw: 11, initialOrder: 2 },
-        "HY Rollers": { currentPts: 4, mw: 8, initialOrder: 3 },
-        "Senses United": { currentPts: 4, mw: 7, initialOrder: 4 },
-        "Kiwi Stars": { currentPts: 2, mw: 6, initialOrder: 5 },
-        "Apex Strikers": { currentPts: 2, mw: 7, initialOrder: 6 }, 
-        "Anvita Aces": { currentPts: 0, mw: 6, initialOrder: 7 }
+        "White Horse": { currentPts: 6, mp: 13, mw: 9 },
+        "HY Panthers": { currentPts: 6, mp: 18, mw: 11 },
+        "HY Rollers": { currentPts: 4, mp: 12, mw: 8 },
+        "Senses United": { currentPts: 4, mp: 14, mw: 7 },
+        "Kiwi Stars": { currentPts: 2, mp: 14, mw: 6 },
+        "Apex Strikers": { currentPts: 2, mp: 19, mw: 7 },
+        "Anvita Aces": { currentPts: 0, mp: 18, mw: 6 }
     };
 
     const fixtures = [
@@ -443,9 +436,13 @@
 
         for (let i = 0; i < permutations; i++) {
             const standings = {};
-            Object.keys(teams).forEach(t => standings[t] = { pts: teams[t].currentPts, mw: teams[t].mw });
+            Object.keys(teams).forEach(t => {
+                standings[t] = { pts: teams[t].currentPts, mp: teams[t].mp, mw: teams[t].mw };
+            });
 
             fixtures.filter(f => f.outcome !== null).forEach(f => {
+                standings[f.t1].mp += 2;
+                standings[f.t2].mp += 2;
                 if (f.outcome === 't1') { 
                     standings[f.t1].pts += 2; 
                     standings[f.t1].mw += 2; 
@@ -459,6 +456,8 @@
             let currentPermMatches = [];
             uncalculated.forEach(f => {
                 const winner = (temp % 2 === 0) ? f.t1 : f.t2;
+                standings[f.t1].mp += 2;
+                standings[f.t2].mp += 2;
                 standings[winner].pts += 2;
                 standings[winner].mw += 2;
                 currentPermMatches.push({ md: f.md, t1: f.t1, t2: f.t2, winner: winner });
@@ -467,8 +466,9 @@
 
             const ranked = Object.keys(standings).sort((a, b) => {
                 if (standings[b].pts !== standings[a].pts) return standings[b].pts - standings[a].pts;
-                if (standings[b].mw !== standings[a].mw) return standings[b].mw - standings[a].mw;
-                return teams[a].initialOrder - teams[b].initialOrder;
+                const mwPctB = standings[b].mw / standings[b].mp;
+                const mwPctA = standings[a].mw / standings[a].mp;
+                return mwPctB - mwPctA;
             });
 
             const top4 = ranked.slice(0, 4);
@@ -499,21 +499,28 @@
         const container = document.getElementById('standings-list');
         container.innerHTML = '';
 
-        const trackedScores = {};
+        const currentStandings = {};
         Object.keys(teams).forEach(t => {
-            let pts = teams[t].currentPts;
-            fixtures.filter(f => f.outcome !== null).forEach(f => {
-                if (f.outcome === 't1' && f.t1 === t) pts += 2;
-                if (f.outcome === 't2' && f.t2 === t) pts += 2;
-            });
-            trackedScores[t] = pts;
+            currentStandings[t] = { pts: teams[t].currentPts, mp: teams[t].mp, mw: teams[t].mw };
         });
 
-        // Tie-breaker: 1. Points, 2. Matches Won (MW), 3. Original sorting
+        fixtures.filter(f => f.outcome !== null).forEach(f => {
+            currentStandings[f.t1].mp += 2;
+            currentStandings[f.t2].mp += 2;
+            if (f.outcome === 't1') { 
+                currentStandings[f.t1].pts += 2; 
+                currentStandings[f.t1].mw += 2; 
+            } else { 
+                currentStandings[f.t2].pts += 2; 
+                currentStandings[f.t2].mw += 2; 
+            }
+        });
+
         const sorted = Object.keys(teams).sort((a, b) => {
-            if (trackedScores[b] !== trackedScores[a]) return trackedScores[b] - trackedScores[a];
-            if (teams[b].mw !== teams[a].mw) return teams[b].mw - teams[a].mw;
-            return teams[a].initialOrder - teams[b].initialOrder;
+            if (currentStandings[b].pts !== currentStandings[a].pts) return currentStandings[b].pts - currentStandings[a].pts;
+            const mwPctB = currentStandings[b].mw / currentStandings[b].mp;
+            const mwPctA = currentStandings[a].mw / currentStandings[a].mp;
+            return mwPctB - mwPctA;
         });
 
         sorted.forEach((team, idx) => {
@@ -522,6 +529,7 @@
             if (parseFloat(pct) >= 80) badgeClass = 'badge-green';
             if (parseFloat(pct) <= 20) badgeClass = 'badge-red';
 
+            const displayMwPct = ((currentStandings[team].mw / currentStandings[team].mp) * 100).toFixed(2);
             const md4WinPct = matrix[team].md4_total ? ((matrix[team].md4_win / (matrix[team].md4_total / 2)) * 100).toFixed(0) : pct;
             const md4LossPct = matrix[team].md4_total ? ((matrix[team].md4_loss / (matrix[team].md4_total / 2)) * 100).toFixed(0) : pct;
             const md5WinPct = matrix[team].md5_total ? ((matrix[team].md5_win / (matrix[team].md5_total / 2)) * 100).toFixed(0) : pct;
@@ -534,7 +542,7 @@
                     <div class="team-rank">${idx + 1}</div>
                     <div>
                         <div class="team-name">${team}</div>
-                        <div class="team-stats">${trackedScores[team]} Pts | ${teams[team].mw} MW</div>
+                        <div class="team-stats">${currentStandings[team].pts} Pts | MW%: ${displayMwPct}%</div>
                     </div>
                 </div>
                 <div style="display: flex; align-items: center; gap: 15px;">
