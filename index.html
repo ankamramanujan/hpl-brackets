@@ -326,7 +326,7 @@
 
     <div class="card contact-box">
         <h2>Share Your Sports Insights</h2>
-        <form action="https://web3forms.com/submit" method="POST">
+        <form action="https://api.web3forms.com/submit" method="POST">
             <input type="hidden" name="access_key" value="ec78615e-4d6e-4326-a764-daa9b399cbf9">
             <input type="hidden" name="subject" value="New HPL Sports Insight Submission">
             
@@ -340,7 +340,7 @@
     </div>
 
     <footer>
-        &copy; Rally Club, Official Performance Partner of HY-ROLLERS
+        &copy; Rally Club, Official Performance partner of HY-ROLLERS
     </footer>
 </div>
 
@@ -350,15 +350,17 @@
         const countElement = document.getElementById('count');
         
         fetch(`https://api.counterapi.dev/v1/${uniqueId}/views/up`)
-            .then(res => res.json())
-            .then(data => {
+            .then(function(res) { 
+                return res.json(); 
+            })
+            .then(function(data) {
                 if (data && data.count) {
                     countElement.innerText = data.count;
                 } else {
                     fallbackLocalCounter();
                 }
             })
-            .catch(() => {
+            .catch(function() {
                 fallbackLocalCounter();
             });
     }
@@ -371,13 +373,13 @@
     }
 
     const teams = {
-        "White Horse": { currentPts: 6, mp: 13, mw: 9 },
-        "HY Panthers": { currentPts: 6, mp: 18, mw: 11 },
-        "HY Rollers": { currentPts: 4, mp: 12, mw: 8 },
-        "Senses United": { currentPts: 4, mp: 14, mw: 7 },
-        "Kiwi Stars": { currentPts: 2, mp: 14, mw: 6 },
-        "Apex Strikers": { currentPts: 2, mp: 19, mw: 7 },
-        "Anvita Aces": { currentPts: 0, mp: 18, mw: 6 }
+        "White Horse": { currentPts: 6, mp: 13, mw: 9, initialOrder: 1 },
+        "HY Panthers": { currentPts: 6, mp: 18, mw: 11, initialOrder: 2 },
+        "HY Rollers": { currentPts: 4, mp: 12, mw: 8, initialOrder: 3 },
+        "Senses United": { currentPts: 4, mp: 14, mw: 7, initialOrder: 4 },
+        "Kiwi Stars": { currentPts: 2, mp: 14, mw: 6, initialOrder: 5 },
+        "Apex Strikers": { currentPts: 2, mp: 19, mw: 7, initialOrder: 6 },
+        "Anvita Aces": { currentPts: 0, mp: 18, mw: 6, initialOrder: 7 }
     };
 
     const fixtures = [
@@ -397,7 +399,7 @@
         container.innerHTML = '';
         const matchdays = [4, 5];
 
-        matchdays.forEach(md => {
+        matchdays.forEach(function(md) {
             const heading = document.createElement('div');
             heading.className = 'md-header';
             heading.innerText = 'Matchday ' + md;
@@ -495,10 +497,15 @@
             });
 
             const ranked = Object.keys(standings).sort(function(a, b) {
-                if (standings[b].pts !== standings[a].pts) return standings[b].pts - standings[a].pts;
+                if (standings[b].pts !== standings[a].pts) {
+                    return standings[b].pts - standings[a].pts;
+                }
                 const mwPctB = standings[b].mw / standings[b].mp;
                 const mwPctA = standings[a].mw / standings[a].mp;
-                return mwPctB - mwPctA;
+                if (mwPctB !== mwPctA) {
+                    return mwPctB - mwPctA;
+                }
+                return teams[a].initialOrder - teams[b].initialOrder;
             });
 
             const top4 = ranked.slice(0, 4);
@@ -556,7 +563,10 @@
             }
             const mwPctB = currentStandings[b].mw / currentStandings[b].mp;
             const mwPctA = currentStandings[a].mw / currentStandings[a].mp;
-            return mwPctB - mwPctA;
+            if (mwPctB !== mwPctA) {
+                return mwPctB - mwPctA;
+            }
+            return teams[a].initialOrder - teams[b].initialOrder;
         });
 
         sorted.forEach(function(team, idx) {
