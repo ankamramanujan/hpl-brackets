@@ -348,35 +348,34 @@
 
 <script>
     function updateCounter() {
-        const countElement = document.getElementById('count');
-        const binId = "66ca2b07e41b4d34e4c5b364"; 
-        
-        fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
-            headers: { "X-Bin-Meta": "false" }
-        })
-        .then(function(res) { 
-            return res.json(); 
-        })
-        .then(function(data) {
-            let globalViews = parseInt(data.views || 146) + 1;
-            countElement.innerText = globalViews;
-            
-            fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-Bin-Meta": "false"
-                },
-                body: JSON.stringify({ views: globalViews })
-            }).catch(function() { 
-                console.log("Database update deferred."); 
-            });
-        })
-        .catch(function() {
-            let localViews = localStorage.getItem('hpl_views_fallback') || 146;
-            localViews = parseInt(localViews) + 1;
-            localStorage.setItem('hpl_views_fallback', localViews);
-            countElement.innerText = localViews;
+  const countElement = document.getElementById('count');
+  const namespace = 'hpl_padel_2026';
+  const key = 'views';
+
+  // Hits the increment endpoint for your unique namespace/key
+  fetch(`https://api.counterapi.dev/v1/${namespace}/${key}/up`)
+    .then(function (res) {
+      if (!res.ok) throw new Error('Network response was not ok');
+      return res.json();
+    })
+    .then(function (data) {
+      if (data && (data.count !== undefined || data.value !== undefined)) {
+        countElement.innerText = data.count ?? data.value;
+      } else {
+        fallbackLocalCounter();
+      }
+    })
+    .catch(function () {
+      fallbackLocalCounter();
+    });
+}
+
+function fallbackLocalCounter() {
+  const countElement = document.getElementById('count');
+  let localViews = localStorage.getItem('hpl_views_fallback') || 146;
+  localViews = parseInt(localViews, 10) + 1;
+  localStorage.setItem('hpl_views_fallback', localViews);
+  countElement.innerText = localViews;
         });
     }
 
