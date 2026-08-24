@@ -33,8 +33,10 @@
             grid-template-columns: 1fr;
             gap: 25px;
         }
-        @media(min-width: 900px) {
-            .grid { grid-template-columns: 350px 1fr; }
+        @media (min-width: 900px) {
+            .grid { 
+                grid-template-columns: 350px 1fr; 
+            }
         }
         .fixtures-card {
             background: #f8fafc;
@@ -84,7 +86,9 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        .btn:hover { background: #f1f5f9; }
+        .btn:hover { 
+            background: #f1f5f9; 
+        }
         .btn.active-win {
             background: #22c55e;
             color: white;
@@ -106,7 +110,9 @@
             cursor: pointer;
             margin-top: 10px;
         }
-        .btn-reset:hover { background: #1e40af; }
+        .btn-reset:hover { 
+            background: #1e40af; 
+        }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -122,7 +128,9 @@
             background-color: #0f2c59;
             color: white;
         }
-        tr:hover { background-color: #f8fafc; }
+        tr:hover { 
+            background-color: #f8fafc; 
+        }
         .badge {
             display: inline-block;
             padding: 4px 8px;
@@ -130,15 +138,30 @@
             font-size: 12px;
             font-weight: bold;
         }
-        .badge-green { background: #dcfce7; color: #15803d; }
-        .badge-yellow { background: #fef9c3; color: #a16207; }
-        .badge-red { background: #fee2e2; color: #b91c1c; }
+        .badge-green { 
+            background: #dcfce7; 
+            color: #15803d; 
+        }
+        .badge-yellow { 
+            background: #fef9c3; 
+            color: #a16207; 
+        }
+        .badge-red { 
+            background: #fee2e2; 
+            color: #b91c1c; 
+        }
         .matrix-cell {
             font-size: 12px;
             line-height: 1.4;
         }
-        .win-text { color: #16a34a; font-weight: 600; }
-        .loss-text { color: #dc2626; font-weight: 600; }
+        .win-text { 
+            color: #16a34a; 
+            font-weight: 600; 
+        }
+        .loss-text { 
+            color: #dc2626; 
+            font-weight: 600; 
+        }
     </style>
 </head>
 <body>
@@ -147,7 +170,7 @@
     <h1>Hyderabad Padel League (HPL)</h1>
     <h2>Dynamic Qualification Matrix & Live Standings Tracker</h2>
     <p>Toggle the results of the remaining fixtures in the sidebar. The simulator will compute all mathematical permutations in real-time to update the qualification percentages for the top 4 playoffs.</p>
-   
+    
     <div class="grid">
         <!-- Sidebar Fixture Controls -->
         <div class="fixtures-card">
@@ -244,22 +267,36 @@
     function calculateProbabilities() {
         const uncalculatedFixtures = fixtures.filter(f => f.outcome === null);
         const permutationsCount = Math.pow(2, uncalculatedFixtures.length);
-       
+        
         const qualificationCounts = {};
         Object.keys(teams).forEach(t => qualificationCounts[t] = 0);
 
         const matrixData = {};
         Object.keys(teams).forEach(t => {
-            matrixData[t] = { md4_win: 0, md4_loss: 0, md5_win: 0, md5_loss: 0, md4_total: 0, md5_total: 0 };
+            matrixData[t] = { 
+                md4_win: 0, 
+                md4_loss: 0, 
+                md5_win: 0, 
+                md5_loss: 0, 
+                md4_total: 0, 
+                md5_total: 0 
+            };
         });
 
         for (let i = 0; i < permutationsCount; i++) {
             const currentStandings = {};
-            Object.keys(teams).forEach(t => currentStandings[t] = { pts: teams[t].currentPts, mw: teams[t].mw });
+            Object.keys(teams).forEach(t => {
+                currentStandings[t] = { pts: teams[t].currentPts, mw: teams[t].mw };
+            });
 
             fixtures.filter(f => f.outcome !== null).forEach(f => {
-                if (f.outcome === 't1') { currentStandings[f.t1].pts += 2; currentStandings[f.t1].mw += 2; }
-                else { currentStandings[f.t2].pts += 2; currentStandings[f.t2].mw += 2; }
+                if (f.outcome === 't1') { 
+                    currentStandings[f.t1].pts += 2; 
+                    currentStandings[f.t1].mw += 2; 
+                } else { 
+                    currentStandings[f.t2].pts += 2; 
+                    currentStandings[f.t2].mw += 2; 
+                }
             });
 
             let temp = i;
@@ -284,3 +321,86 @@
 
             currentPermMatches.forEach(m => {
                 const t1Qualified = top4.includes(m.t1);
+                const t2Qualified = top4.includes(m.t2);
+                const prefix = m.md === 4 ? 'md4' : 'md5';
+
+                if (m.winner === m.t1) {
+                    matrixData[m.t1][`${prefix}_win`] += t1Qualified ? 1 : 0;
+                    matrixData[m.t2][`${prefix}_loss`] += t2Qualified ? 1 : 0;
+                } else {
+                    matrixData[m.t2][`${prefix}_win`] += t2Qualified ? 1 : 0;
+                    matrixData[m.t1][`${prefix}_loss`] += t1Qualified ? 1 : 0;
+                }
+
+                matrixData[m.t1][`${prefix}_total`]++;
+                matrixData[m.t2][`${prefix}_total`]++;
+            });
+        }
+
+        renderTable(qualificationCounts, permutationsCount, matrixData);
+    }
+
+    function renderTable(counts, total, matrix) {
+        const tbody = document.getElementById('standings-body');
+        tbody.innerHTML = '';
+
+        const trackedScores = {};
+        Object.keys(teams).forEach(t => {
+            let pts = teams[t].currentPts;
+            fixtures
+                .filter(f => f.outcome !== null)
+                .forEach(f => {
+                    if (f.outcome === 't1' && f.t1 === t) pts += 2;
+                    if (f.outcome === 't2' && f.t2 === t) pts += 2;
+                });
+            trackedScores[t] = pts;
+        });
+
+        const sortedTeams = Object.keys(teams).sort(
+            (a, b) => trackedScores[b] - trackedScores[a]
+        );
+
+        sortedTeams.forEach((team, idx) => {
+            const percentage = ((counts[team] / total) * 100).toFixed(1);
+            let badgeClass = 'badge-yellow';
+
+            if (parseFloat(percentage) >= 80) badgeClass = 'badge-green';
+            if (parseFloat(percentage) <= 20) badgeClass = 'badge-red';
+
+            const md4WinPct = matrix[team].md4_total
+                ? ((matrix[team].md4_win / (matrix[team].md4_total / 2)) * 100).toFixed(0)
+                : percentage;
+            const md4LossPct = matrix[team].md4_total
+                ? ((matrix[team].md4_loss / (matrix[team].md4_total / 2)) * 100).toFixed(0)
+                : percentage;
+            const md5WinPct = matrix[team].md5_total
+                ? ((matrix[team].md5_win / (matrix[team].md5_total / 2)) * 100).toFixed(0)
+                : percentage;
+            const md5LossPct = matrix[team].md5_total
+                ? ((matrix[team].md5_loss / (matrix[team].md5_total / 2)) * 100).toFixed(0)
+                : percentage;
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${idx + 1}</td>
+                <td><strong>${team}</strong></td>
+                <td>${trackedScores[team]} pts</td>
+                <td><span class="badge ${badgeClass}">${percentage}%</span></td>
+                <td class="matrix-cell">
+                    <span class="win-text">If Win: ${md4WinPct}%</span><br>
+                    <span class="loss-text">If Lose: ${md4LossPct}%</span>
+                </td>
+                <td class="matrix-cell">
+                    <span class="win-text">If Win: ${md5WinPct}%</span><br>
+                    <span class="loss-text">If Lose: ${md5LossPct}%</span>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
+    renderFixtures();
+    calculateProbabilities();
+</script>
+</body>
+</html>
