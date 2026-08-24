@@ -345,45 +345,33 @@
 </div>
 
 <script>
-    // Global Multi-Device Synchronized Counter Logic
-function updateCounter() {
-  const countElement = document.getElementById('count');
+    function updateCounter() {
+        const uniqueId = "hpl_brackets_tracker_2026";
+        const countElement = document.getElementById('count');
+        
+        fetch(`https://api.counterapi.dev/v1/${uniqueId}/views/up`)
+            .then(function(res) { 
+                return res.json(); 
+            })
+            .then(function(data) {
+                if (data && data.count) {
+                    countElement.innerText = data.count;
+                } else {
+                    fallbackLocalCounter();
+                }
+            })
+            .catch(function() {
+                fallbackLocalCounter();
+            });
+    }
 
-  // This public master bucket reads and commits global updates simultaneously
-  const binId = '66ca2b07e41b4d34e4c5b364';
+    function fallbackLocalCounter() {
+        let localViews = localStorage.getItem('hpl_views_fallback') || 146;
+        localViews = parseInt(localViews) + 1;
+        localStorage.setItem('hpl_views_fallback', localViews);
+        document.getElementById('count').innerText = localViews;
+    }
 
-  // 1. Fetch current universal master state
-  fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
-    headers: { 'X-Bin-Meta': 'false' },
-  })
-    .then(function (res) {
-      return res.json();
-    })
-    .then(function (data) {
-      // 2. Increment global views accurately
-      let globalViews = parseInt(data.views || 146) + 1;
-      countElement.innerText = globalViews;
-
-      // 3. Commit the new universal count back to the cloud database
-      fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Bin-Meta': 'false',
-        },
-        body: JSON.stringify({ views: globalViews }),
-      }).catch(function () {
-        console.log('Cloud sync delayed.');
-      });
-    })
-    .catch(function () {
-      // Local sandbox runtime preservation fail-safe
-      let localViews = localStorage.getItem('hpl_views_fallback') || 146;
-      localViews = parseInt(localViews) + 1;
-      localStorage.setItem('hpl_views_fallback', localViews);
-      countElement.innerText = localViews;
-    });
-}
     const teams = {
         "White Horse": { currentPts: 6, mp: 13, mw: 9, initialOrder: 1 },
         "HY Panthers": { currentPts: 6, mp: 18, mw: 11, initialOrder: 2 },
@@ -546,113 +534,70 @@ function updateCounter() {
         renderStandingsList(qualCounts, permutations, matrix);
     }
 
-        function renderStandingsList(counts, total, matrix) {
-        const container = document.getElementById('standings-list');
-        container.innerHTML = '';
+unction renderStandingsList(counts, total, matrix) {
+    const container = document.getElementById('standings-list');
+    container.innerHTML = '';
 
-        const currentStandings = {};
-        Object.keys(teams).forEach(function(t) { currentStandings[t] = { pts: teams[t].currentPts, mp: teams[t].mp, mw: teams[t].mw }; });
+    const currentStandings = {};
+    Object.keys(teams).forEach(function(t) { currentStandings[t] = { pts: teams[t].currentPts, mp: teams[t].mp, mw: teams[t].mw }; });
 
-        fixtures.filter(function(f) { return f.outcome !== null; }).forEach(function(f) {
-            currentStandings[f.t1].mp += 2;
-            currentStandings[f.t2].mp += 2;
-            if (f.outcome === 't1') { currentStandings[f.t1].pts += 2; currentStandings[f.t1].mw += 2; }
-            else { currentStandings[f.t2].pts += 2; currentStandings[f.t2].mw += 2; }
-        });
+    fixtures.filter(function(f) { return f.outcome !== null; }).forEach(function(f) {
+        currentStandings[f.t1].mp += 2;
+        currentStandings[f.t2].mp += 2;
+        if (f.outcome === 't1') { currentStandings[f.t1].pts += 2; currentStandings[f.t1].mw += 2; }
+        else { currentStandings[f.t2].pts += 2; currentStandings[f.t2].mw += 2; }
+    });
 
-        const sorted = Object.keys(teams).sort(function(a, b) {
-            if(currentStandings[b].pts !== currentStandings[a].pts) return currentStandings[b].pts - currentStandings[a].pts;
-            const mwPctB = currentStandings[b].mw / currentStandings[b].mp;
-            const mwPctA = currentStandings[a].mw / currentStandings[a].mp;
-            return mwPctB - mwPctA;
-        });
+    const sorted = Object.keys(teams).sort(function(a, b) {
+        if(currentStandings[b].pts !== currentStandings[a].pts) return currentStandings[b].pts - currentStandings[a].pts;
+        const mwPctB = currentStandings[b].mw / currentStandings[b].mp;
+        const mwPctA = currentStandings[a].mw / currentStandings[a].mp;
+        return mwPctB - mwPctA;
+    });
 
-        sorted.forEach(function(team, idx) {
-            const pct = ((counts[team] / total) * 100).toFixed(1);
-            let badgeClass = 'badge-yellow';
-            if (parseFloat(pct) >= 80) badgeClass = 'badge-green';
-            if (parseFloat(pct) <= 20) badgeClass = 'badge-red';
+    sorted.forEach(function(team, idx) {
+        const pct = ((counts[team] / total) * 100).toFixed(1);
+        let badgeClass = 'badge-yellow';
+        if (parseFloat(pct) >= 80) badgeClass = 'badge-green';
+        if (parseFloat(pct) <= 20) badgeClass = 'badge-red';
 
-            const displayMwPct = ((currentStandings[team].mw / currentStandings[team].mp) * 100).toFixed(2);
+        const displayMwPct = ((currentStandings[team].mw / currentStandings[team].mp) * 100).toFixed(2);
 
-            const md4WinPct = matrix[team].md4_total ? ((matrix[team].md4_win / (matrix[team].md4_total/2)) * 100).toFixed(0) : pct;
-            const md4LossPct = matrix[team].md4_total ? ((matrix[team].md4_loss / (matrix[team].md4_total/2)) * 100).toFixed(0) : pct;
-            const md5WinPct = matrix[team].md5_total ? ((matrix[team].md5_win / (matrix[team].md5_total/2)) * 100).toFixed(0) : pct;
-            const md5LossPct = matrix[team].md5_total ? ((matrix[team].md5_loss / (matrix[team].md5_total/2)) * 100).toFixed(0) : pct;
+        const md4WinPct = matrix[team].md4_total ? ((matrix[team].md4_win / (matrix[team].md4_total/2)) * 100).toFixed(0) : pct;
+        const md4LossPct = matrix[team].md4_total ? ((matrix[team].md4_loss / (matrix[team].md4_total/2)) * 100).toFixed(0) : pct;
+        const md5WinPct = matrix[team].md5_total ? ((matrix[team].md5_win / (matrix[team].md5_total/2)) * 100).toFixed(0) : pct;
+        const md5LossPct = matrix[team].md5_total ? ((matrix[team].md5_loss / (matrix[team].md5_total/2)) * 100).toFixed(0) : pct;
 
-            // Simplified universal tooltip text strings for hover tracking
-            const t4w = `If ${team} WINS their Matchday 4 tie, they have a ${md4WinPct}% overall chance to qualify for the playoffs.`;
-            const t4l = `If ${team} LOSES their Matchday 4 tie, their playoff qualification chance drops or shifts to ${md4LossPct}%.`;
-            const t5w = `If ${team} WINS their Matchday 5 tie, they have a ${md5WinPct}% overall chance to qualify for the playoffs.`;
-            const t5l = `If ${team} LOSES their Matchday 5 tie, their playoff qualification chance drops or shifts to ${md5LossPct}%.`;
+        const t4w = `If ${team} WINS Matchday 4, their playoff chance becomes ${md4WinPct}%.`;
+        const t4l = `If ${team} LOSES Matchday 4, their playoff chance becomes ${md4LossPct}%.`;
+        const t5w = `If ${team} WINS Matchday 5, their playoff chance becomes ${md5WinPct}%.`;
+        const t5l = `If ${team} LOSES Matchday 5, their playoff chance becomes ${md5LossPct}%.`;
 
-            const row = document.createElement('div');
-            row.className = 'team-row';
-            row.innerHTML = `
-                <div class="team-meta">
-                    <div class="team-rank">${idx + 1}</div>
-                    <div>
-                        <div class="team-name">${team}</div>
-                        <div class="team-stats">${currentStandings[team].pts} Pts | MW%: ${displayMwPct}%</div>
-                    </div>
+        const row = document.createElement('div');
+        row.className = 'team-row';
+        row.innerHTML = `
+            <div class="team-meta">
+                <div class="team-rank">${idx + 1}</div>
+                <div>
+                    <div class="team-name">${team}</div>
+                    <div class="team-stats">${currentStandings[team].pts} Pts | MW%: ${displayMwPct}%</div>
                 </div>
-                <div style="display: flex; align-items: center; gap: 15px;">
-                    <div class="lookahead-box">
-                        M4: <span class="win-text" title="${t4w}">W:${md4WinPct}%</span> <span class="loss-text" title="${t4l}">L:${md4LossPct}%</span><br>
-                        M5: <span class="win-text" title="${t5w}">W:${md5WinPct}%</span> <span class="loss-text" title="${t5l}">L:${md5LossPct}%</span>
-                    </div>
-                    <div class="probability-badge ${badgeClass}">${pct}%</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <div class="lookahead-box">
+                    <span style="cursor:help; border-bottom:1px dashed #cbd5e1;" title="Shows playoff chances if the team wins (W) or loses (L) this matchday.">M4:</span> 
+                    <span class="win-text" title="${t4w}">W:${md4WinPct}%</span> 
+                    <span class="loss-text" title="${t4l}">L:${md4LossPct}%</span><br>
+                    <span style="cursor:help; border-bottom:1px dashed #cbd5e1;" title="Shows playoff chances if the team wins (W) or loses (L) this matchday.">M5:</span> 
+                    <span class="win-text" title="${t5w}">W:${md5WinPct}%</span> 
+                    <span class="loss-text" title="${t5l}">L:${md5LossPct}%</span>
                 </div>
-            `;
-            container.appendChild(row);
-        });
-
-
-        const sorted = Object.keys(teams).sort(function(a, b) {
-            if (currentStandings[b].pts !== currentStandings[a].pts) {
-                return currentStandings[b].pts - currentStandings[a].pts;
-            }
-            const mwPctB = currentStandings[b].mw / currentStandings[b].mp;
-            const mwPctA = currentStandings[a].mw / currentStandings[a].mp;
-            if (mwPctB !== mwPctA) {
-                return mwPctB - mwPctA;
-            }
-            return teams[a].initialOrder - teams[b].initialOrder;
-        });
-
-        sorted.forEach(function(team, idx) {
-            const pct = ((counts[team] / total) * 100).toFixed(1);
-            let badgeClass = 'badge-yellow';
-            if (parseFloat(pct) >= 80) badgeClass = 'badge-green';
-            if (parseFloat(pct) <= 20) badgeClass = 'badge-red';
-
-            const displayMwPct = ((currentStandings[team].mw / currentStandings[team].mp) * 100).toFixed(2);
-            const md4WinPct = matrix[team].md4_total ? ((matrix[team].md4_win / (matrix[team].md4_total / 2)) * 100).toFixed(0) : pct;
-            const md4LossPct = matrix[team].md4_total ? ((matrix[team].md4_loss / (matrix[team].md4_total / 2)) * 100).toFixed(0) : pct;
-            const md5WinPct = matrix[team].md5_total ? ((matrix[team].md5_win / (matrix[team].md5_total / 2)) * 100).toFixed(0) : pct;
-            const md5LossPct = matrix[team].md5_total ? ((matrix[team].md5_loss / (matrix[team].md5_total / 2)) * 100).toFixed(0) : pct;
-
-            const row = document.createElement('div');
-            row.className = 'team-row';
-            row.innerHTML = `
-                <div class="team-meta">
-                    <div class="team-rank">${idx + 1}</div>
-                    <div>
-                        <div class="team-name">${team}</div>
-                        <div class="team-stats">${currentStandings[team].pts} Pts | MW%: ${displayMwPct}%</div>
-                    </div>
-                </div>
-                <div style="display: flex; align-items: center; gap: 15px;">
-                    <div class="lookahead-box">
-                        M4: <span class="win-text">W:${md4WinPct}%</span> <span class="loss-text">L:${md4LossPct}%</span><br>
-                        M5: <span class="win-text">W:${md5WinPct}%</span> <span class="loss-text">L:${md5LossPct}%</span>
-                    </div>
-                    <div class="probability-badge ${badgeClass}">${pct}%</div>
-                </div>
-            `;
-            container.appendChild(row);
-        });
-    }
+                <div class="probability-badge ${badgeClass}">${pct}%</div>
+            </div>
+        `;
+        container.appendChild(row);
+    });
+}
 
     updateCounter();
     renderFixtures();
