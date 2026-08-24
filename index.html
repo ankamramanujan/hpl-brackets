@@ -164,19 +164,19 @@
             text-align: center;
         }
 
-        .badge-green { 
-            background: #dcfce7; 
-            color: #15803d; 
+        .badge-green {
+            background: #dcfce7;
+            color: #15803d;
         }
 
-        .badge-yellow { 
-            background: #fef9c3; 
-            color: #a16207; 
+        .badge-yellow {
+            background: #fef9c3;
+            color: #a16207;
         }
 
-        .badge-red { 
-            background: #fee2e2; 
-            color: #b91c1c; 
+        .badge-red {
+            background: #fee2e2;
+            color: #b91c1c;
         }
 
         .lookahead-box {
@@ -186,14 +186,14 @@
             min-width: 110px;
         }
 
-        .win-text { 
-            color: var(--win-dark); 
-            font-weight: 600; 
+        .win-text {
+            color: var(--win-dark);
+            font-weight: 600;
         }
 
-        .loss-text { 
-            color: var(--loss-dark); 
-            font-weight: 600; 
+        .loss-text {
+            color: var(--loss-dark);
+            font-weight: 600;
         }
 
         .md-header {
@@ -255,8 +255,8 @@
         }
 
         @media (min-width: 600px) {
-            .form-row { 
-                grid-template-columns: 1fr 1fr; 
+            .form-row {
+                grid-template-columns: 1fr 1fr;
             }
         }
 
@@ -327,7 +327,7 @@
     <div class="card contact-box">
         <h2>Share Your Sports Insights</h2>
         <form action="https://web3forms.com/submit" method="POST">
-            <input type="hidden" name="access_key" value="YOUR_WEB3FORMS_ACCESS_KEY_HERE">
+            <input type="hidden" name="access_key" value="ec78615e-4d6e-4326-a764-daa9b399cbf9">
             <input type="hidden" name="subject" value="New HPL Sports Insight Submission">
             
             <div class="form-row">
@@ -395,14 +395,19 @@
     function renderFixtures() {
         const container = document.getElementById('fixture-list');
         container.innerHTML = '';
+        const matchdays = [4, 5];
 
-        [4, 5].forEach(md => {
+        matchdays.forEach(md => {
             const heading = document.createElement('div');
             heading.className = 'md-header';
-            heading.innerText = `Matchday ${md}`;
+            heading.innerText = 'Matchday ' + md;
             container.appendChild(heading);
 
-            fixtures.filter(f => f.md === md).forEach(f => {
+            const filtered = fixtures.filter(function(f) { 
+                return f.md === md; 
+            });
+
+            filtered.forEach(function(f) {
                 const item = document.createElement('div');
                 item.className = 'fixture-item';
                 item.innerHTML = `
@@ -418,27 +423,35 @@
     }
 
     function setOutcome(id, winner) {
-        const f = fixtures.find(item => item.id === id);
+        const f = fixtures.find(function(item) { 
+            return item.id === id; 
+        });
         f.outcome = f.outcome === winner ? null : winner;
         renderFixtures();
         calculateProbabilities();
     }
 
     function resetFixtures() {
-        fixtures.forEach(f => f.outcome = null);
+        fixtures.forEach(function(f) { 
+            f.outcome = null; 
+        });
         renderFixtures();
         calculateProbabilities();
     }
 
     function calculateProbabilities() {
-        const uncalculated = fixtures.filter(f => f.outcome === null);
+        const uncalculated = fixtures.filter(function(f) { 
+            return f.outcome === null; 
+        });
         const permutations = Math.pow(2, uncalculated.length);
         
         const qualCounts = {};
-        Object.keys(teams).forEach(t => (qualCounts[t] = 0));
+        Object.keys(teams).forEach(function(t) { 
+            qualCounts[t] = 0; 
+        });
 
         const matrix = {};
-        Object.keys(teams).forEach(t => {
+        Object.keys(teams).forEach(function(t) {
             matrix[t] = { 
                 md4_win: 0, 
                 md4_loss: 0, 
@@ -451,11 +464,13 @@
 
         for (let i = 0; i < permutations; i++) {
             const standings = {};
-            Object.keys(teams).forEach(t => {
-                standings[t] = { pts: teams[t].currentPts, mp: teams[t].mp, mw: teams[t].mw };
+            Object.keys(teams).forEach(function(t) { 
+                standings[t] = { pts: teams[t].currentPts, mp: teams[t].mp, mw: teams[t].mw }; 
             });
 
-            fixtures.filter(f => f.outcome !== null).forEach(f => {
+            fixtures.filter(function(f) { 
+                return f.outcome !== null; 
+            }).forEach(function(f) {
                 standings[f.t1].mp += 2;
                 standings[f.t2].mp += 2;
                 if (f.outcome === 't1') { 
@@ -469,17 +484,17 @@
 
             let temp = i;
             let currentPermMatches = [];
-            uncalculated.forEach(f => {
-                const winner = (temp % 2 === 0) ? f.t1 : f.t2;
+            uncalculated.forEach(function(f) {
                 standings[f.t1].mp += 2;
                 standings[f.t2].mp += 2;
+                const winner = (temp % 2 === 0) ? f.t1 : f.t2;
                 standings[winner].pts += 2;
                 standings[winner].mw += 2;
                 currentPermMatches.push({ md: f.md, t1: f.t1, t2: f.t2, winner: winner });
                 temp = Math.floor(temp / 2);
             });
 
-            const ranked = Object.keys(standings).sort((a, b) => {
+            const ranked = Object.keys(standings).sort(function(a, b) {
                 if (standings[b].pts !== standings[a].pts) return standings[b].pts - standings[a].pts;
                 const mwPctB = standings[b].mw / standings[b].mp;
                 const mwPctA = standings[a].mw / standings[a].mp;
@@ -487,23 +502,25 @@
             });
 
             const top4 = ranked.slice(0, 4);
-            top4.forEach(team => qualCounts[team]++);
+            top4.forEach(function(team) { 
+                qualCounts[team]++; 
+            });
 
-            currentPermMatches.forEach(m => {
+            currentPermMatches.forEach(function(m) {
                 const t1Qual = top4.includes(m.t1);
                 const t2Qual = top4.includes(m.t2);
                 const prefix = m.md === 4 ? 'md4' : 'md5';
 
                 if (m.winner === m.t1) {
-                    matrix[m.t1][`${prefix}_win`] += t1Qual ? 1 : 0;
-                    matrix[m.t2][`${prefix}_loss`] += t2Qual ? 1 : 0;
+                    matrix[m.t1][prefix + '_win'] += t1Qual ? 1 : 0;
+                    matrix[m.t2][prefix + '_loss'] += t2Qual ? 1 : 0;
                 } else {
-                    matrix[m.t2][`${prefix}_win`] += t2Qual ? 1 : 0;
-                    matrix[m.t1][`${prefix}_loss`] += t1Qual ? 1 : 0;
+                    matrix[m.t2][prefix + '_win'] += t2Qual ? 1 : 0;
+                    matrix[m.t1][prefix + '_loss'] += t1Qual ? 1 : 0;
                 }
 
-                matrix[m.t1][`${prefix}_total`]++;
-                matrix[m.t2][`${prefix}_total`]++;
+                matrix[m.t1][prefix + '_total']++;
+                matrix[m.t2][prefix + '_total']++;
             });
         }
 
@@ -515,11 +532,13 @@
         container.innerHTML = '';
 
         const currentStandings = {};
-        Object.keys(teams).forEach(t => {
-            currentStandings[t] = { pts: teams[t].currentPts, mp: teams[t].mp, mw: teams[t].mw };
+        Object.keys(teams).forEach(function(t) { 
+            currentStandings[t] = { pts: teams[t].currentPts, mp: teams[t].mp, mw: teams[t].mw }; 
         });
 
-        fixtures.filter(f => f.outcome !== null).forEach(f => {
+        fixtures.filter(function(f) { 
+            return f.outcome !== null; 
+        }).forEach(function(f) {
             currentStandings[f.t1].mp += 2;
             currentStandings[f.t2].mp += 2;
             if (f.outcome === 't1') { 
@@ -531,7 +550,7 @@
             }
         });
 
-        const sorted = Object.keys(teams).sort((a, b) => {
+        const sorted = Object.keys(teams).sort(function(a, b) {
             if (currentStandings[b].pts !== currentStandings[a].pts) {
                 return currentStandings[b].pts - currentStandings[a].pts;
             }
@@ -540,7 +559,7 @@
             return mwPctB - mwPctA;
         });
 
-        sorted.forEach((team, idx) => {
+        sorted.forEach(function(team, idx) {
             const pct = ((counts[team] / total) * 100).toFixed(1);
             let badgeClass = 'badge-yellow';
             if (parseFloat(pct) >= 80) badgeClass = 'badge-green';
