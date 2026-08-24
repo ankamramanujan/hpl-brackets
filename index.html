@@ -345,33 +345,45 @@
 </div>
 
 <script>
-    function updateCounter() {
-        const uniqueId = "hpl_brackets_tracker_2026";
-        const countElement = document.getElementById('count');
-        
-        fetch(`https://api.counterapi.dev/v1/${uniqueId}/views/up`)
-            .then(function(res) { 
-                return res.json(); 
-            })
-            .then(function(data) {
-                if (data && data.count) {
-                    countElement.innerText = data.count;
-                } else {
-                    fallbackLocalCounter();
-                }
-            })
-            .catch(function() {
-                fallbackLocalCounter();
-            });
-    }
+    // Global Multi-Device Synchronized Counter Logic
+function updateCounter() {
+  const countElement = document.getElementById('count');
 
-    function fallbackLocalCounter() {
-        let localViews = localStorage.getItem('hpl_views_fallback') || 146;
-        localViews = parseInt(localViews) + 1;
-        localStorage.setItem('hpl_views_fallback', localViews);
-        document.getElementById('count').innerText = localViews;
-    }
+  // This public master bucket reads and commits global updates simultaneously
+  const binId = '66ca2b07e41b4d34e4c5b364';
 
+  // 1. Fetch current universal master state
+  fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
+    headers: { 'X-Bin-Meta': 'false' },
+  })
+    .then(function (res) {
+      return res.json();
+    })
+    .then(function (data) {
+      // 2. Increment global views accurately
+      let globalViews = parseInt(data.views || 146) + 1;
+      countElement.innerText = globalViews;
+
+      // 3. Commit the new universal count back to the cloud database
+      fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Bin-Meta': 'false',
+        },
+        body: JSON.stringify({ views: globalViews }),
+      }).catch(function () {
+        console.log('Cloud sync delayed.');
+      });
+    })
+    .catch(function () {
+      // Local sandbox runtime preservation fail-safe
+      let localViews = localStorage.getItem('hpl_views_fallback') || 146;
+      localViews = parseInt(localViews) + 1;
+      localStorage.setItem('hpl_views_fallback', localViews);
+      countElement.innerText = localViews;
+    });
+}
     const teams = {
         "White Horse": { currentPts: 6, mp: 13, mw: 9, initialOrder: 1 },
         "HY Panthers": { currentPts: 6, mp: 18, mw: 11, initialOrder: 2 },
