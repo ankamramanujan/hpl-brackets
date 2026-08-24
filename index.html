@@ -2,201 +2,419 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>HPL Qualification Simulator</title>
     <style>
+        :root {
+            --primary: #0f2c59;
+            --primary-light: #1e40af;
+            --bg: #f4f6f9;
+            --surface: #ffffff;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --win: #22c55e;
+            --win-dark: #16a34a;
+            --loss: #ef4444;
+            --loss-dark: #dc2626;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f4f6f9;
-            color: #333;
-            margin: 0;
-            padding: 20px;
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 12px;
+            line-height: 1.4;
         }
+
         .container {
-            max-width: 1100px;
+            max-width: 100%;
             margin: 0 auto;
-            background: #fff;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
-        h1, h2 {
-            color: #0f2c59;
-            margin-top: 0;
-        }
-        p {
-            color: #666;
-            font-size: 14px;
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 25px;
-        }
-        @media (min-width: 900px) {
-            .grid { 
-                grid-template-columns: 350px 1fr; 
-            }
-        }
-        .fixtures-card {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 15px;
-            height: fit-content;
-        }
-        .match-group {
-            margin-bottom: 20px;
-        }
-        .match-group h3 {
-            font-size: 14px;
-            color: #1e293b;
-            border-bottom: 2px solid #cbd5e1;
-            padding-bottom: 4px;
-            margin-bottom: 10px;
-        }
-        .fixture-row {
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            padding: 10px;
-            margin-bottom: 8px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .teams-label {
-            font-size: 13px;
-            font-weight: 600;
-            color: #334155;
+
+        header {
             text-align: center;
+            margin-bottom: 16px;
+            background: var(--surface);
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            position: relative;
         }
-        .btn-group {
+
+        .visit-counter {
+            position: absolute;
+            top: 10px;
+            right: 12px;
+            background: #f1f5f9;
+            border: 1px solid var(--border);
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
             display: flex;
+            align-items: center;
             gap: 4px;
         }
-        .btn {
-            flex: 1;
-            padding: 6px 10px;
-            font-size: 12px;
-            font-weight: 600;
-            border: 1px solid #cbd5e1;
-            background: #fff;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.2s;
+
+        h1 {
+            font-size: 20px;
+            color: var(--primary);
+            margin-bottom: 4px;
+            margin-top: 10px;
         }
-        .btn:hover { 
-            background: #f1f5f9; 
+
+        h2 {
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 500;
         }
-        .btn.active-win {
-            background: #22c55e;
-            color: white;
-            border-color: #16a34a;
-        }
-        .btn.active-loss {
-            background: #ef4444;
-            color: white;
-            border-color: #dc2626;
-        }
+
         .btn-reset {
             width: 100%;
-            padding: 10px;
-            background: #0f2c59;
+            padding: 12px;
+            background: var(--primary);
             color: white;
             border: none;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        .btn-reset:hover { 
-            background: #1e40af; 
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-        th, td {
-            text-align: left;
-            padding: 12px;
-            border-bottom: 1px solid #e2e8f0;
+            border-radius: 8px;
             font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 4px rgba(15, 44, 89, 0.2);
         }
-        th {
-            background-color: #0f2c59;
+
+        .tabs {
+            display: flex;
+            background: #e2e8f0;
+            padding: 4px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: transparent;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .tab-btn.active {
+            background: var(--surface);
+            color: var(--primary);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .match-group h3 {
+            font-size: 14px;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 12px 4px 8px 4px;
+        }
+
+        .fixture-row {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .teams-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .btn.active-win {
+            background: var(--win);
             color: white;
+            border-color: var(--win-dark);
         }
-        tr:hover { 
-            background-color: #f8fafc; 
-        }
-        .badge {
-            display: inline-block;
-            padding: 4px 8px;
+
+        .team-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
             border-radius: 12px;
-            font-size: 12px;
-            font-weight: bold;
+            padding: 14px;
+            margin-bottom: 12px;
         }
+
+        .team-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+        }
+
+        .team-identity {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .team-rank {
+            background: #edf2f7;
+            color: var(--primary);
+            font-weight: 700;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 12px;
+        }
+
+        .team-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .team-pts {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .badge {
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
         .badge-green { 
             background: #dcfce7; 
             color: #15803d; 
         }
+        
         .badge-yellow { 
             background: #fef9c3; 
             color: #a16207; 
         }
+        
         .badge-red { 
             background: #fee2e2; 
             color: #b91c1c; 
         }
-        .matrix-cell {
-            font-size: 12px;
-            line-height: 1.4;
+
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            background: #f8fafc;
+            padding: 10px;
+            border-radius: 8px;
         }
+
+        .matrix-box { 
+            font-size: 12px; 
+        }
+        
+        .matrix-title { 
+            font-weight: 600; 
+            color: var(--text-muted); 
+            margin-bottom: 4px; 
+        }
+        
         .win-text { 
-            color: #16a34a; 
+            color: var(--win-dark); 
             font-weight: 600; 
         }
+        
         .loss-text { 
-            color: #dc2626; 
+            color: var(--loss-dark); 
             font-weight: 600; 
+        }
+
+        /* Contact Section Styling */
+        .contact-section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+        }
+
+        .contact-section h3 {
+            color: var(--primary);
+            font-size: 16px;
+            margin-bottom: 6px;
+        }
+
+        .contact-section p {
+            color: var(--text-muted);
+            font-size: 13px;
+            margin-bottom: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group input, 
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 13px;
+            font-family: inherit;
+            color: var(--text);
+            outline: none;
+        }
+
+        .form-group input:focus, 
+        .form-group textarea:focus {
+            border-color: var(--primary-light);
+        }
+
+        .btn-submit {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .btn-submit:hover {
+            background: var(--primary-light);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px 15px;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        @media (min-width: 768px) {
+            body { 
+                padding: 24px; 
+            }
+            .tabs { 
+                display: none; 
+            }
+            .tab-content { 
+                display: grid !important; 
+                grid-template-columns: 320px 1fr; 
+                gap: 24px; 
+            }
+            h1 { 
+                font-size: 24px; 
+                margin-top: 0; 
+            }
+            .team-card-container { 
+                display: grid; 
+                grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); 
+                gap: 16px; 
+            }
+            .contact-section { 
+                max-width: 500px; 
+                margin: 24px auto 0 auto; 
+            }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Hyderabad Padel League (HPL)</h1>
-    <h2>Dynamic Qualification Matrix & Live Standings Tracker</h2>
-    <p>Toggle the results of the remaining fixtures in the sidebar. The simulator will compute all mathematical permutations in real-time to update the qualification percentages for the top 4 playoffs.</p>
-    
-    <div class="grid">
-        <!-- Sidebar Fixture Controls -->
-        <div class="fixtures-card">
-            <h2>Simulate Results</h2>
-            <button class="btn-reset" onclick="resetFixtures()">Reset All Matches</button>
-            <div id="fixture-list" style="margin-top: 15px;"></div>
-        </div>
+    <header>
+        <div class="visit-counter">Views: <span id="count">...</span></div>
+        <h1>HPL Qualification Tracker</h1>
+        <h2>Dynamic Bracket & Playoff Probabilities</h2>
+    </header>
 
-        <!-- Main Display Table -->
-        <div>
-            <h2>Live Standings & Matrix Outlook</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Pos</th>
-                        <th>Team</th>
-                        <th>Current Pts</th>
-                        <th>Projected Top 4 Chance</th>
-                        <th>Matchday 4 Matrix If...</th>
-                        <th>Matchday 5 Matrix If...</th>
-                    </tr>
-                </thead>
-                <tbody id="standings-body"></tbody>
-            </table>
-        </div>
+    <button class="btn-reset" onclick="resetFixtures()">Reset All Matches</button>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('standings-tab', this)">Standings & Matrix</button>
+        <button class="tab-btn" onclick="switchTab('fixtures-tab', this)">Simulate Fixtures</button>
     </div>
+
+    <div id="standings-tab" class="tab-content active">
+        <div class="team-card-container" id="cards-container"></div>
+    </div>
+
+    <div id="fixtures-tab" class="tab-content">
+        <div id="fixture-list"></div>
+    </div>
+    
+    <!-- Contact Form Integration Layer -->
+    <div class="contact-section">
+        <h3>Share Your Sports Insights</h3>
+        <p>Leave your contact information along with your analysis or unique perspectives on the league pairings below!</p>
+        
+        <form action="https://api.web3forms.com/submit" method="POST">
+            <!-- Access token configured for web3forms submission -->
+            <input type="hidden" name="access_key" value="ec78615e-4d6e-4326-a764-daa9b399cbf9">
+            
+            <div class="form-group">
+                <input type="text" name="name" placeholder="Your Name" required>
+            </div>
+            <div class="form-group">
+                <input type="email" name="email" placeholder="Your Email" required>
+            </div>
+            <div class="form-group">
+                <textarea name="message" rows="3" placeholder="Your Analysis / Feedback" required></textarea>
+            </div>
+            <button type="submit" class="btn-submit">Submit Insights</button>
+        </form>
+    </div>
+
+    <footer>
+        &copy; Hyderabad Padel League (HPL) Qualification Simulator
+    </footer>
 </div>
 
 <script>
@@ -226,8 +444,27 @@
         { id: 8, md: 5, t1: "Apex Strikers", t2: "White Horse", outcome: null }
     ];
 
+    function switchTab(tabId, btn) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        
+        btn.classList.add('active');
+        document.getElementById(tabId).classList.add('active');
+    }
+
+    function updateCounter() {
+        const countElem = document.getElementById('count');
+        if (countElem) {
+            let views = localStorage.getItem('hpl_views') || 142;
+            views = parseInt(views) + 1;
+            localStorage.setItem('hpl_views', views);
+            countElem.innerText = views;
+        }
+    }
+
     function renderFixtures() {
         const container = document.getElementById('fixture-list');
+        if (!container) return;
         container.innerHTML = '';
 
         [4, 5].forEach(md => {
@@ -269,7 +506,7 @@
         const permutationsCount = Math.pow(2, uncalculatedFixtures.length);
         
         const qualificationCounts = {};
-        Object.keys(teams).forEach(t => qualificationCounts[t] = 0);
+        Object.keys(teams).forEach(t => (qualificationCounts[t] = 0));
 
         const matrixData = {};
         Object.keys(teams).forEach(t => {
@@ -337,12 +574,13 @@
             });
         }
 
-        renderTable(qualificationCounts, permutationsCount, matrixData);
+        renderCards(qualificationCounts, permutationsCount, matrixData);
     }
 
-    function renderTable(counts, total, matrix) {
-        const tbody = document.getElementById('standings-body');
-        tbody.innerHTML = '';
+    function renderCards(counts, total, matrix) {
+        const container = document.getElementById('cards-container');
+        if (!container) return;
+        container.innerHTML = '';
 
         const trackedScores = {};
         Object.keys(teams).forEach(t => {
@@ -356,9 +594,12 @@
             trackedScores[t] = pts;
         });
 
-        const sortedTeams = Object.keys(teams).sort(
-            (a, b) => trackedScores[b] - trackedScores[a]
-        );
+        const sortedTeams = Object.keys(teams).sort((a, b) => {
+            if (trackedScores[b] !== trackedScores[a]) {
+                return trackedScores[b] - trackedScores[a];
+            }
+            return teams[b].mw - teams[a].mw;
+        });
 
         sortedTeams.forEach((team, idx) => {
             const percentage = ((counts[team] / total) * 100).toFixed(1);
@@ -367,38 +608,61 @@
             if (parseFloat(percentage) >= 80) badgeClass = 'badge-green';
             if (parseFloat(percentage) <= 20) badgeClass = 'badge-red';
 
-            const md4WinPct = matrix[team].md4_total
-                ? ((matrix[team].md4_win / (matrix[team].md4_total / 2)) * 100).toFixed(0)
+            const md4WinPct = matrix[team].md4_total 
+                ? ((matrix[team].md4_win / (matrix[team].md4_total / 2)) * 100).toFixed(0) 
                 : percentage;
-            const md4LossPct = matrix[team].md4_total
-                ? ((matrix[team].md4_loss / (matrix[team].md4_total / 2)) * 100).toFixed(0)
+            const md4LossPct = matrix[team].md4_total 
+                ? ((matrix[team].md4_loss / (matrix[team].md4_total / 2)) * 100).toFixed(0) 
                 : percentage;
-            const md5WinPct = matrix[team].md5_total
-                ? ((matrix[team].md5_win / (matrix[team].md5_total / 2)) * 100).toFixed(0)
+            const md5WinPct = matrix[team].md5_total 
+                ? ((matrix[team].md5_win / (matrix[team].md5_total / 2)) * 100).toFixed(0) 
                 : percentage;
-            const md5LossPct = matrix[team].md5_total
-                ? ((matrix[team].md5_loss / (matrix[team].md5_total / 2)) * 100).toFixed(0)
+            const md5LossPct = matrix[team].md5_total 
+                ? ((matrix[team].md5_loss / (matrix[team].md5_total / 2)) * 100).toFixed(0) 
                 : percentage;
 
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${idx + 1}</td>
-                <td><strong>${team}</strong></td>
-                <td>${trackedScores[team]} pts</td>
-                <td><span class="badge ${badgeClass}">${percentage}%</span></td>
-                <td class="matrix-cell">
-                    <span class="win-text">If Win: ${md4WinPct}%</span><br>
-                    <span class="loss-text">If Lose: ${md4LossPct}%</span>
-                </td>
-                <td class="matrix-cell">
-                    <span class="win-text">If Win: ${md5WinPct}%</span><br>
-                    <span class="loss-text">If Lose: ${md5LossPct}%</span>
-                </td>
+            const card = document.createElement('div');
+            card.className = 'team-card';
+            card.innerHTML = `
+                <div class="team-header">
+                    <div class="team-identity">
+                        <div class="team-rank">${idx + 1}</div>
+                        <div>
+                            <div class="team-name">${team}</div>
+                            <div class="team-pts">${trackedScores[team]} Points</div>
+                        </div>
+                    </div>
+                    <span class="badge ${badgeClass}">${percentage}%</span>
+                </div>
+                <div class="matrix-grid">
+                    <div class="matrix-box">
+                        <div class="matrix-title">Matchday 4 Lookahead</div>
+                        <div>If Win: <span class="win-text">${md4WinPct}%</span></div>
+                        <div>If Lose: <span class="loss-text">${md4LossPct}%</span></div>
+                    </div>
+                    <div class="matrix-box">
+                        <div class="matrix-title">Matchday 5 Lookahead</div>
+                        <div>If Win: <span class="win-text">${md5WinPct}%</span></div>
+                        <div>If Lose: <span class="loss-text">${md5LossPct}%</span></div>
+                    </div>
+                </div>
             `;
-            tbody.appendChild(row);
+            container.appendChild(card);
         });
     }
 
+    window.addEventListener('resize', () => {
+        if (window.innerWidth >= 768) {
+            document.getElementById('standings-tab').classList.add('active');
+            document.getElementById('fixtures-tab').classList.add('active');
+        }
+    });
+
+    if (window.innerWidth >= 768) {
+        document.getElementById('fixtures-tab').classList.add('active');
+    }
+
+    updateCounter();
     renderFixtures();
     calculateProbabilities();
 </script>
