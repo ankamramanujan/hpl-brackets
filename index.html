@@ -189,11 +189,13 @@
         .win-text {
             color: var(--win-dark);
             font-weight: 600;
+            cursor: help;
         }
 
         .loss-text {
             color: var(--loss-dark);
             font-weight: 600;
+            cursor: help;
         }
 
         .md-header {
@@ -306,7 +308,7 @@
 
 <div class="container">
     <header>
-        <div class="visit-counter">Views: <span id="count">1</span></div>
+        <div class="visit-counter">Views: <span id="count">...</span></div>
         <h1>HPL Qualification Tracker</h1>
         <h2>Playoff Standings & Lookahead Analytics</h2>
         <button class="btn-reset" onclick="resetFixtures()">Reset Simulator</button>
@@ -346,30 +348,36 @@
 
 <script>
     function updateCounter() {
-        const uniqueId = "hpl_brackets_tracker_2026";
         const countElement = document.getElementById('count');
+        const binId = "66ca2b07e41b4d34e4c5b364"; 
         
-        fetch(`https://api.counterapi.dev/v1/${uniqueId}/views/up`)
-            .then(function(res) { 
-                return res.json(); 
-            })
-            .then(function(data) {
-                if (data && data.count) {
-                    countElement.innerText = data.count;
-                } else {
-                    fallbackLocalCounter();
-                }
-            })
-            .catch(function() {
-                fallbackLocalCounter();
+        fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
+            headers: { "X-Bin-Meta": "false" }
+        })
+        .then(function(res) { 
+            return res.json(); 
+        })
+        .then(function(data) {
+            let globalViews = parseInt(data.views || 146) + 1;
+            countElement.innerText = globalViews;
+            
+            fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-Bin-Meta": "false"
+                },
+                body: JSON.stringify({ views: globalViews })
+            }).catch(function() { 
+                console.log("Database update deferred."); 
             });
-    }
-
-    function fallbackLocalCounter() {
-        let localViews = localStorage.getItem('hpl_views_fallback') || 146;
-        localViews = parseInt(localViews) + 1;
-        localStorage.setItem('hpl_views_fallback', localViews);
-        document.getElementById('count').innerText = localViews;
+        })
+        .catch(function() {
+            let localViews = localStorage.getItem('hpl_views_fallback') || 146;
+            localViews = parseInt(localViews) + 1;
+            localStorage.setItem('hpl_views_fallback', localViews);
+            countElement.innerText = localViews;
+        });
     }
 
     const teams = {
@@ -534,70 +542,79 @@
         renderStandingsList(qualCounts, permutations, matrix);
     }
 
-unction renderStandingsList(counts, total, matrix) {
-    const container = document.getElementById('standings-list');
-    container.innerHTML = '';
+    function renderStandingsList(counts, total, matrix) {
+        const container = document.getElementById('standings-list');
+        container.innerHTML = '';
 
-    const currentStandings = {};
-    Object.keys(teams).forEach(function(t) { currentStandings[t] = { pts: teams[t].currentPts, mp: teams[t].mp, mw: teams[t].mw }; });
+        const currentStandings = {};
+        Object.keys(teams).forEach(function(t) { 
+            currentStandings[t] = { pts: teams[t].currentPts, mp: teams[t].mp, mw: teams[t].mw }; 
+        });
 
-    fixtures.filter(function(f) { return f.outcome !== null; }).forEach(function(f) {
-        currentStandings[f.t1].mp += 2;
-        currentStandings[f.t2].mp += 2;
-        if (f.outcome === 't1') { currentStandings[f.t1].pts += 2; currentStandings[f.t1].mw += 2; }
-        else { currentStandings[f.t2].pts += 2; currentStandings[f.t2].mw += 2; }
-    });
+        fixtures.filter(function(f) { 
+            return f.outcome !== null; 
+        }).forEach(function(f) {
+            currentStandings[f.t1].mp += 2;
+            currentStandings[f.t2].mp += 2;
+            if (f.outcome === 't1') { 
+                currentStandings[f.t1].pts += 2; 
+                currentStandings[f.t1].mw += 2; 
+            } else { 
+                currentStandings[f.t2].pts += 2; 
+                currentStandings[f.t2].mw += 2; 
+            }
+        });
 
-    const sorted = Object.keys(teams).sort(function(a, b) {
-        if(currentStandings[b].pts !== currentStandings[a].pts) return currentStandings[b].pts - currentStandings[a].pts;
-        const mwPctB = currentStandings[b].mw / currentStandings[b].mp;
-        const mwPctA = currentStandings[a].mw / currentStandings[a].mp;
-        return mwPctB - mwPctA;
-    });
+        const sorted = Object.keys(teams).sort(function(a, b) {
+            if (currentStandings[b].pts !== currentStandings[a].pts) {
+                return currentStandings[b].pts - currentStandings[a].pts;
+            }
+            const mwPctB = currentStandings[b].mw / currentStandings[b].mp;
+            const mwPctA = currentStandings[a].mw / currentStandings[a].mp;
+            if (mwPctB !== mwPctA) {
+                return mwPctB - mwPctA;
+            }
+            return teams[a].initialOrder - teams[b].initialOrder;
+        });
 
-    sorted.forEach(function(team, idx) {
-        const pct = ((counts[team] / total) * 100).toFixed(1);
-        let badgeClass = 'badge-yellow';
-        if (parseFloat(pct) >= 80) badgeClass = 'badge-green';
-        if (parseFloat(pct) <= 20) badgeClass = 'badge-red';
+        sorted.forEach(function(team, idx) {
+            const pct = ((counts[team] / total) * 100).toFixed(1);
+            let badgeClass = 'badge-yellow';
+            if (parseFloat(pct) >= 80) badgeClass = 'badge-green';
+            if (parseFloat(pct) <= 20) badgeClass = 'badge-red';
 
-        const displayMwPct = ((currentStandings[team].mw / currentStandings[team].mp) * 100).toFixed(2);
+            const displayMwPct = ((currentStandings[team].mw / currentStandings[team].mp) * 100).toFixed(2);
+            const md4WinPct = matrix[team].md4_total ? ((matrix[team].md4_win / (matrix[team].md4_total / 2)) * 100).toFixed(0) : pct;
+            const md4LossPct = matrix[team].md4_total ? ((matrix[team].md4_loss / (matrix[team].md4_total / 2)) * 100).toFixed(0) : pct;
+            const md5WinPct = matrix[team].md5_total ? ((matrix[team].md5_win / (matrix[team].md5_total / 2)) * 100).toFixed(0) : pct;
+            const md5LossPct = matrix[team].md5_total ? ((matrix[team].md5_loss / (matrix[team].md5_total / 2)) * 100).toFixed(0) : pct;
 
-        const md4WinPct = matrix[team].md4_total ? ((matrix[team].md4_win / (matrix[team].md4_total/2)) * 100).toFixed(0) : pct;
-        const md4LossPct = matrix[team].md4_total ? ((matrix[team].md4_loss / (matrix[team].md4_total/2)) * 100).toFixed(0) : pct;
-        const md5WinPct = matrix[team].md5_total ? ((matrix[team].md5_win / (matrix[team].md5_total/2)) * 100).toFixed(0) : pct;
-        const md5LossPct = matrix[team].md5_total ? ((matrix[team].md5_loss / (matrix[team].md5_total/2)) * 100).toFixed(0) : pct;
+            const t4w = `If ${team} WINS Matchday 4, their playoff chance becomes ${md4WinPct}%.`;
+            const t4l = `If ${team} LOSES Matchday 4, their playoff chance becomes ${md4LossPct}%.`;
+            const t5w = `If ${team} WINS Matchday 5, their playoff chance becomes ${md5WinPct}%.`;
+            const t5l = `If ${team} LOSES Matchday 5, their playoff chance becomes ${md5LossPct}%.`;
 
-        const t4w = `If ${team} WINS Matchday 4, their playoff chance becomes ${md4WinPct}%.`;
-        const t4l = `If ${team} LOSES Matchday 4, their playoff chance becomes ${md4LossPct}%.`;
-        const t5w = `If ${team} WINS Matchday 5, their playoff chance becomes ${md5WinPct}%.`;
-        const t5l = `If ${team} LOSES Matchday 5, their playoff chance becomes ${md5LossPct}%.`;
-
-        const row = document.createElement('div');
-        row.className = 'team-row';
-        row.innerHTML = `
-            <div class="team-meta">
-                <div class="team-rank">${idx + 1}</div>
-                <div>
-                    <div class="team-name">${team}</div>
-                    <div class="team-stats">${currentStandings[team].pts} Pts | MW%: ${displayMwPct}%</div>
+            const row = document.createElement('div');
+            row.className = 'team-row';
+            row.innerHTML = `
+                <div class="team-meta">
+                    <div class="team-rank">${idx + 1}</div>
+                    <div>
+                        <div class="team-name">${team}</div>
+                        <div class="team-stats">${currentStandings[team].pts} Pts | MW%: ${displayMwPct}%</div>
+                    </div>
                 </div>
-            </div>
-            <div style="display: flex; align-items: center; gap: 15px;">
-                <div class="lookahead-box">
-                    <span style="cursor:help; border-bottom:1px dashed #cbd5e1;" title="Shows playoff chances if the team wins (W) or loses (L) this matchday.">M4:</span> 
-                    <span class="win-text" title="${t4w}">W:${md4WinPct}%</span> 
-                    <span class="loss-text" title="${t4l}">L:${md4LossPct}%</span><br>
-                    <span style="cursor:help; border-bottom:1px dashed #cbd5e1;" title="Shows playoff chances if the team wins (W) or loses (L) this matchday.">M5:</span> 
-                    <span class="win-text" title="${t5w}">W:${md5WinPct}%</span> 
-                    <span class="loss-text" title="${t5l}">L:${md5LossPct}%</span>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div class="lookahead-box">
+                        M4: <span class="win-text" title="${t4w}">W:${md4WinPct}%</span> <span class="loss-text" title="${t4l}">L:${md4LossPct}%</span><br>
+                        M5: <span class="win-text" title="${t5w}">W:${md5WinPct}%</span> <span class="loss-text" title="${t5l}">L:${md5LossPct}%</span>
+                    </div>
+                    <div class="probability-badge ${badgeClass}">${pct}%</div>
                 </div>
-                <div class="probability-badge ${badgeClass}">${pct}%</div>
-            </div>
-        `;
-        container.appendChild(row);
-    });
-}
+            `;
+            container.appendChild(row);
+        });
+    }
 
     updateCounter();
     renderFixtures();
